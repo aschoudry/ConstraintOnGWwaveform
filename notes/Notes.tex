@@ -105,27 +105,39 @@ We assume that the perturber is loosing mass at given rate $\dot{\epsilon}$. Giv
  	&=\frac{1}{16\,\pi}\Big[\bar{\Psi}_{4}^{2\,2}(t)\int_{-\infty}^{t}dt'\Psi_{4}^{2\,2}(t') + \Psi_{4}^{2\,2}(t)\int_{-\infty}^{t}dt'\bar{\Psi}_{4}^{2\,2}(t')\Big] \nonumber\\
  	&=\frac{1}{16\pi}\Big[\ddot{\bar{\sigma}}(t)\dot{\sigma}(t) + \dot{\bar{\sigma}}(t)\ddot{\sigma}(t)\Big] = \frac{1}{8\pi}\Re\Big[\ddot{\bar{\sigma}}(t)\dot{\sigma}(t)\Big]\nonumber
  \end{align}
+ 
+ \subsubsection{Luminosity from a binary system}
+ 
  Now let us look at how at leading the luminosity of binary source which is shedding mass evolve with time 
  \begin{align}
  	\mathcal{L}_{GW} & = \frac{32}{5}\frac{M^3\,\mu^2}{r^5}\nonumber\\
- 	\frac{d\mathcal{L}_{GW}}{dt} & = \frac{32}{5}\Big[\frac{3M^2\mu^2}{r^5}\frac{dM}{dt} + \frac{2M^3\mu}{r^5}\frac{d\mu}{dt} - \frac{5M^3\mu^2}{r^6}\frac{dr}{dt}\Big]
+ 	\frac{d\mathcal{L}_{GW}}{dt} & = \frac{32M^3\mu^2}{5r^5}\Big[\frac{3}{M}\frac{dM}{dt} + \frac{2}{\mu}\frac{d\mu}{dt} - \frac{5}{r}\frac{dr}{dt}\Big]
  \end{align}
  
-\begin{align}
-	\Psi_{2}  = \Psi^{(0)}_{2} + 	\Psi^{(1)}_{2} \nonumber \\
-	 \, \Psi^{(0)}_{2}  = M\,\rho^{3} \, \nonumber \\ \text{and} \, \Psi^{(1)}_{2}  = \frac{E}{r^{3}},\\ \space E := -\mu\, u_{t} = \mu\frac{(1- 2 M/r_{0})}{(1- 3M/r_{0})^{1/2}}
-\end{align}
-The radiation reaction has a negligible effect on dynamics of the perturber inside ISCO, so we model the rate of mass loss to the $\Psi^{o}_{2}$. First we observe  the the luminosity of gravitational wave from binary system is given by
-\begin{equation}
-	\mathcal{L} = \frac{1}{r}\mathcal{M}^{5/3}\Omega^{2/3} \, \text{ where} \, \mathcal{M} = \mu^{3/5}M^{2/5}
-\end{equation}
-This luminosity is proportional to square of the gravitational wave strain amplitude. Let us consider the perturber which loose an $\epsilon$ mass how it is related to the gravitational wave luminosity. In our model we let the half of the perturber's mass fall into the black hole and half as radiated into gravitational waves.  
-\begin{align}
-	\mathcal{L} = (\mu-\epsilon)^{2}\,(M+\frac{\epsilon}{2})^{4/3} \approx \mu^{2}\,M^{4/3}\left(1- \frac{2\epsilon}{\mu}\right) \propto |\Omega^{2}\Psi_{4}|^{2}
-\end{align}
+The radiation reaction has a negligible effect on dynamics of the perturber inside ISCO, so we model the rate of mass loss as source of rate of Luminosity change. The Mass of the central black holes is much larger then the mass of the perturber so in the above equation  
 
-\begin{align}
-	\Psi_{2} = & \, M + E(r = r_{ISCO}) = \, \mu\frac{(1-2M/6M)}{(1-3M/6M)^{1/2}} = \frac{2\sqrt{2}\mu}{3}
-\end{align}
-so for the perturbation loosing mass the  $\Psi_{2}$ would change as
+\subsubsection{Mass, Momentum and Angular momentum loss of a perturbed spacetime}
+We can use the time evolution of mass aspect, equation 2.58 in ref[add] to relate the news amplitude to the mass and angular momentum loss. 
+\begin{equation}
+	\dot{\Psi} = \dot{\sigma}\dot{\bar{\sigma}} + k\phi^{0}_{2}\bar{\phi}^{0}_{2}
+\end{equation}
+
+In the absence of electromagnetic fields we set the second term in right hand side to zero. The above equation then is related to mass and angular momentum loss of the perturbed space time with the radiated GWs strain. 
+\begin{equation}
+	\dot{\Psi} = -\frac{2\sqrt{2}G}{c^2}\dot{M} -\frac{6G}{c^3}\dot{P}^iY^{0}_{1\,i} + ...
+\end{equation}  
+
+We can use the above results to get an insight into how mass and angular momentum are related. For the case of gravitational wave emitted the merger the waveform is well described by BOB model. We have 
+\begin{equation}
+	|\psi_4| = A_{p}\text{sech}[\gamma(t-t_p)]
+\end{equation}
+Since $|\sigma|\approx |\psi|/\omega$ for quasi circular systems. Where $\omega$ is given by
+\begin{equation}
+	\Omega = \Biggl\{\Omega^{4}_{0} + k\Big[\tanh\Big(\frac{t-t_p}{\tau}\Big) -\tanh\Big(\frac{t_0-t_p}{\tau}\Big)\Big]\Biggr\}^{1/4}
+\end{equation}
+where the constant k is given by
+\begin{equation}
+	k = \Bigg[\frac{\Omega^{4}_{QNM} - \Omega^4_{0}}{1-\tanh[(t_0-t_p)/\tau]}\Bigg]
+\end{equation}
+
 \end{document}
