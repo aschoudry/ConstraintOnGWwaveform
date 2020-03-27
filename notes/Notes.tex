@@ -73,7 +73,13 @@ The interior mass and three-momentum with the $l=0$ and $l=1$ harmonic contribut
 	M_{B} = \frac{-c^{2}}{2\sqrt{2}\,G}\Psi^{0}\\
 	P^{i} = -\frac{c^3}{6\,G}\Psi^i
 \end{align}
-
+and 
+\begin{align}
+	Y^{0}_{0} &= 1 \nonumber \\
+	Y^{0}_{1\,i} &= -c_i \nonumber \\
+	Y^{0}_{2\,i\,j} &= 3c_{i}c_{j} - 2\delta_{i\,j} \nonumber \\
+	c_{i} &= -\sqrt{2}\{\cos(\phi)\sin(\theta), \sin(\phi)\sin(\theta), \cos(\theta)\}
+\end{align}
 Using the above results, at leading order we can relate mass and energy momentum of interior space time to $\psi_2$ as
 \begin{equation}
 	-2\,\sqrt{2}\,M_B = \Re\left[\psi^{0}_{2} + \eth^{2}\bar{\sigma}^{o} + {\sigma}^{o}\dot{\bar{\sigma}}^{o} \right]
@@ -88,7 +94,7 @@ In Backwards One-Body (BOB)[add ref] description of black hole binary merger, th
 \begin{figure}
 	\includegraphics[width=5.5in]{../plots/BOB.pdf}
 	\caption{The figure}
-	\label{fig:resedualGrowthLogLog}
+	\label{fig:BoBFig}
 \end{figure} 
 \subsection{Evolution of $\Psi^{o}_{2}$ for perturbed Swarzchild black hole }
 We assume that the perturber is loosing mass at given rate $\dot{\epsilon}$. Given this and looking at Bianchi identity on asymptotically flat space time, we can also deduce that the source mass is evolving as $\dot{\epsilon}^2$. In this model where we assume both perturber and source mass evolving in time, we can relate this to gravitational wave strain. The gravitational wave luminosity is given by,
@@ -146,5 +152,9 @@ Using equation 2.6 and 2.7 at leading order, we can relate the mass loss rate to
 	|\dot{\sigma}|^2 = -2\sqrt{2}\dot{M} = \frac{|\psi_4|^2}{4\Omega^2}
 \end{equation}
 To look at how the Mass evolves near the peak, we Taylor expand $|\dot{\sigma}|^2$ around the peak.
-
+\begin{figure}
+	\includegraphics[width=4.0in]{../plots/SigmaSqr.pdf}
+	\caption{The figure}
+	\label{fig:SigmaSqr}
+\end{figure} 
 \end{document}
