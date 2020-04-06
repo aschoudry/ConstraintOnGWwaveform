@@ -157,6 +157,43 @@ To look at how the Mass evolves near the peak, we Taylor expand $|\dot{\sigma}|^
 	\caption{The figure}
 	\label{fig:SigmaSqr}
 \end{figure} 
+\subsubsection{Motivating $\psi_2$ from Bianchi identity on asymptotically flat space-time}
+One of the Bianchi identity on asymptotically flat space-time is given by,
+
+\begin{equation}
+	\dot{\psi}_2 = - \eth^{2}\dot{\bar{\sigma}}^{o} - {\sigma}^{o}\ddot{\bar{\sigma}}^{o}
+\end{equation}
+Now for $\sigma$ in the above expression is related to $\psi_4$ in the following way.
+\begin{equation}
+	\ddot{\bar{\sigma}}^{o} = r\left(\ddot{h}_{+} + i\, \ddot{h}_{\times}  \right)
+	\label{psi4} = \psi_{4}^{0}
+\end{equation} 
+From the BOB model we have the $\psi_{4}^{2\,2}$ 
+\begin{equation}
+	\psi_{4}^{22} = |\psi_{4}^{22}|\, e^{2i\Phi}
+\end{equation}
+where $\Phi$ is given by Eqn. 10 in ref\cite{McWilliams_2019}. Now $\psi_{4}^{0}$ is given,
+\begin{equation}
+	\psi_{4} = \psi^{22}_{4\,\,-2}Y^{22}(\theta, \phi)
+\end{equation}
+where
+\begin{equation}
+	_{-2}Y^{2\pm 2}(\theta,\phi) = \frac{1}{8}\sqrt{\frac{5}{\pi}}\left(1 \pm \cos(\theta)\right)^{2}e^{\pm 2\,i\,\Phi}
+\end{equation}
+Now we can use equation 2.13, 2.15 and the expression for $\psi_{4}$ for BOB in local super momentum balance low. The operator $\eth$ acts on spin-weighted spherical harmonics to increase the spin weight by 1 (i.e $\eth^2 _{-2}Y^{2\pm 2}(\theta,\phi) = \,_{0}Y^{2\pm 2}(\theta,\phi)$, which are the ordinary spherical harmonics). Let us look at each term in local super momentum balance law.
+\begin{equation}
+	\sigma = h_{+} + i\,h_{\times} = \frac{\psi_{4}}{\omega^2}
+\end{equation}   
+Since amplitude is slowly varying function of time, each time derivative in the above equation brings one $\omega$ in front. So we have the following relations.
+\begin{equation}
+	\dot{\sigma}^{0} = \frac{\psi_{4}^{0}}{\omega} 
+\end{equation}
+So the quantity inside the integral in local balance law can be written as
+\begin{equation}
+	-\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi) = -\int_{u_{1}}^{u_{2}} du \left[\bigg|\frac{\psi_{4}^{0}}{\omega}\bigg|^{2} - \Re\left(\eth^{2}\frac{\psi_{4}^{0}}{\omega} \right) \right](u, \theta, \phi)
+\end{equation}
+We can now use $\psi_{4}$ from BOB model.
+ 
 
 \section*{References}
 
