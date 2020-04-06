@@ -190,11 +190,30 @@ Since amplitude is slowly varying function of time, each time derivative in the 
 \end{equation}
 So the quantity inside the integral in local balance law can be written as
 \begin{equation}
-	-\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi) = -\int_{u_{1}}^{u_{2}} du \left[\bigg|\frac{\psi_{4}^{0}}{\omega}\bigg|^{2} - \Re\left(\eth^{2}\frac{\psi_{4}^{0}}{\omega} \right) \right](u, \theta, \phi)
+	-\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi) = -\int_{u_{1}}^{u_{2}} du \left[\bigg|\frac{\psi_{4}^{0}}{\omega}\bigg|^{2} - \Re\left(\eth^{2}\frac{\bar{\psi}_{4}^{0}}{\omega} \right) \right](u, \theta, \phi)
 \end{equation}
-We can now use $\psi_{4}$ from BOB model.
- 
-
+We can now use $\psi_{4}$ from BOB model. Spin weighted spherical harmonics are independent of time so they can be taken out of integral in the above equation. The above equation can be rewritten as 
+\begin{equation}
+	-\int_{u_{1}}^{u_{2}} du \left[\bigg|\frac{\psi_{4}^{0}}{\omega}\bigg|^{2} - \Re\left(\eth^{2}\frac{\bar{\psi}_{4}^{0}}{\omega} \right) \right](u, \theta, \phi) = \Re\left(\eth^2 _{-2}Y^{22}(\theta,\phi)\int_{u_{1}}^{u_{2}} du \frac{\bar{\psi}_{4}^{22}}{\omega}(u)\right) - \Bigg|\,_{-2}Y^{22}(\theta,\phi)\Bigg|^2\int_{u_{1}}^{u_{2}} du \bigg|\frac{\psi_{4}^{22}}{\omega}\bigg|^{2}(u)
+\end{equation}
+The above expression, which is the left hand side of super momentum balance can be written as
+\begin{equation}
+	P(u_2, u_1, \theta, \phi) =  \Re\left( _{0}Y^{22}(\theta,\phi)\int_{u_{1}}^{u_{2}} du \frac{\bar{\psi}_{4}^{22}}{\omega}(u)\right) - \Bigg|\,_{-2}Y^{22}(\theta,\phi)\Bigg|^2\int_{u_{1}}^{u_{2}} du \bigg|\frac{\psi_{4}^{22}}{\omega}\bigg|^{2}(u)
+\end{equation} 
+ Let us now look at the right hand side of the super momentum balance law
+ \begin{equation}
+ 	\Re\left[\Psi^{o}_{2} + \bar{\sigma}^{o}\dot{\sigma^{o}}\right]\left(u_{1}, \theta, \phi\right) - \Re\left[\Psi^{o}_{2} + \bar{\sigma}^{o}\dot{\sigma^{o}}\right]\left(u_{2}, \theta, \phi\right) 
+ \end{equation}
+ We can rewrite the above expression as
+ \begin{equation}
+ 	Q(u_2, u_1, \theta, \phi) = \Re\left[\Psi^{o}_{2} +\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{1}\right)- \Re\left[\Psi^{o}_{2} +\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{2}\right) 
+ \end{equation}
+ We can now plot for $P(u_2, u_1, \theta, \phi)$ and $Q(u_2, u_1, \theta, \phi)$ for a given model for $\psi_2$ as a function on initial and final time.
+\begin{figure}
+	\includegraphics[width=5.5in]{../plots/BalanceLawTwosides.pdf}
+	\caption{The figure above show the right hand side of the balance law vs left hand of balance law }
+	\label{fig:RHSvsLHS}
+\end{figure}
 \section*{References}
 
 \bibliographystyle{apsrev4-1}

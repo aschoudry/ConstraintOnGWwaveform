@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.10.8)  6 APR 2020 09:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2019/dev/Debian) (preloaded format=pdflatex 2019.10.8)  6 APR 2020 15:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -637,13 +637,20 @@ Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (hyperref)                removing `math shift' on input line 160.
 
-[3] (./Notes.bbl [4 <../plots/SigmaSqr.pdf>])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 202.
- [5]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 202.
+[3] [4 <../plots/SigmaSqr.pdf>]
+<../plots/BalanceLawTwosides.pdf, id=143, 722.7pt x 470.75874pt>
+File: ../plots/BalanceLawTwosides.pdf Graphic file (type pdf)
+<use ../plots/BalanceLawTwosides.pdf>
+Package pdftex.def Info: ../plots/BalanceLawTwosides.pdf  used on input line 21
+3.
+(pdftex.def)             Requested size: 397.48499pt x 258.9181pt.
+ (./Notes.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 221.
+ [5 <../plots/BalanceLawTwosides.pdf>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 221.
  (./Notes.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 202.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 202.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 221.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 221.
 Package rerunfilecheck Info: File `Notes.out' has not changed.
 (rerunfilecheck)             Checksum: 6386C9896525D4BF3970ECCCAA1D5A84;654.
 
@@ -652,13 +659,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 8919 strings out of 492641
- 126920 string characters out of 6131787
- 244162 words of memory out of 5000000
- 12594 multiletter control sequences out of 15000+600000
+ 8930 strings out of 492641
+ 127183 string characters out of 6131787
+ 244272 words of memory out of 5000000
+ 12599 multiletter control sequences out of 15000+600000
  48122 words of font info for 126 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,14n,31p,588b,486s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 37i,14n,31p,588b,344s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/txfonts/rtxmi.pfb></usr/share/texlive/texmf-dis
 t/fonts/type1/public/txfonts/rtxr.pfb></usr/share/texlive/texmf-dist/fonts/type
@@ -667,10 +674,10 @@ onts/txsy.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/txsyb.p
 fb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on Notes.pdf (5 pages, 117668 bytes).
+Output written on Notes.pdf (5 pages, 129700 bytes).
 PDF statistics:
- 191 PDF objects out of 1000 (max. 8388607)
- 163 compressed objects within 2 object streams
- 52 named destinations out of 1000 (max. 500000)
- 75 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 218 PDF objects out of 1000 (max. 8388607)
+ 183 compressed objects within 2 object streams
+ 57 named destinations out of 1000 (max. 500000)
+ 80 words of extra memory for PDF output out of 10000 (max. 10000000)
 
