@@ -206,12 +206,15 @@ The above expression, which is the left hand side of super momentum balance can 
  \end{equation}
  We can rewrite the above expression as
  \begin{equation}
- 	Q(u_2, u_1, \theta, \phi) = \Re\left[\Psi^{o}_{2} +\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{1}\right)- \Re\left[\Psi^{o}_{2} +\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{2}\right) 
+ 	Q(u_2, u_1, \theta, \phi) = \Re\left[\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{1}\right)- \Re\left[\bigg|\,_{-2}Y^{2 2}(\theta,\phi)\bigg|^{2} \frac{\big|\psi_{4}^{22}\big|^2}{\omega^3}\right]\left(u_{2}\right) 
  \end{equation}
- We can now plot for $P(u_2, u_1, \theta, \phi)$ and $Q(u_2, u_1, \theta, \phi)$ for a given model for $\psi_2$ as a function on initial and final time.
+ We can now plot for $P(u_2, u_1, \theta, \phi)$ and $Q(u_2, u_1, \theta, \phi)$ for a given model for $\psi_2$ as a function on initial and final time. For a given waveform the above equation can also be used to show what $\psi$ should look like for a given model. 	
+ \begin{equation}
+ 	\Psi^{o}_{2}\left(u_2, \theta, \phi\right) - \Psi^{o}_{2}\left(u_1, \theta, \phi\right) = P(u_2, u_1, \theta, \phi) - Q(u_2, u_1, \theta, \phi)
+ \end{equation}
 \begin{figure}
 	\includegraphics[width=5.5in]{../plots/BalanceLawTwosides.pdf}
-	\caption{The figure above show the right hand side of the balance law vs left hand of balance law }
+	\caption{The figure above show $\psi_2$. The blue curve show $\psi_2$ as it is calculated in Eqn[2.24]. Two other curves shows $\psi_2$ constructed to mass loss in perturber and the black hole }
 	\label{fig:RHSvsLHS}
 \end{figure}
 \section*{References}
