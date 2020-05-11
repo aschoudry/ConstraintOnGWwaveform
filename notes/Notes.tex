@@ -90,79 +90,63 @@ Here we have just included only the mass and linear momentum terms, further term
 \end{align}
 Here we have considered only the mass loss rate to the gravitational wave amplitude. Given the gravitational wave amplitude, above relation can be used to motivate the mass loss rate of interior space time and hence we get a insight for $\psi_2$, which appear in the local super-momentum balance law. 
 \section{ Weyl scalar $\Psi^{o}_{2}$ for BOB as perturber cross the light ring }
-In Backwards One-Body (BOB) \cite{McWilliams_2019} description of black hole binary merger, the system is described as a single black hole spacetime with a inspiraling in perturber. At the leading order we can just assume that the mass of the perturber and the source is evolving. We first look at how the mass loss rate in related to GW luminosity at leading order for a non-spinning black hole with inspiraling in perturber
+In Backwards One-Body (BOB) \cite{McWilliams_2019} description of black hole binary merger, the system is described as a single black hole spacetime with a inspiraling in perturber. At the leading order we can just assume that the mass of the perturber and the source is evolving. We first look at how the mass loss rate is related to GW luminosity at leading order for a non-spinning black hole with inspiraling in perturber
 \begin{figure}
 	\includegraphics[width=5.5in]{../plots/BOB.pdf}
 	\caption{The figure}
 	\label{fig:BoBFig}
 \end{figure} 
 \subsection{Evolution of $\Psi^{o}_{2}$ for perturbed Swarzchild black hole }
-We assume that the perturber is loosing mass at given rate $\dot{\epsilon}$. Given this and looking at Bianchi identity on asymptotically flat space time, we can also deduce that the source mass is evolving as $\dot{\epsilon}^2$. In this model where we assume both perturber and source mass evolving in time, we can relate this to gravitational wave strain. The gravitational wave luminosity is given by,
-\begin{align}
-	\mathcal{L} &= -\frac{dE}{dt} = \lim_{r \to +\infty} \frac{r^2}{16\,\pi}\sum_{l=2}^{\infty}\sum_{m=-l}^{l}\Big|\int_{-\infty}^{\infty}dt'\Psi_{4}^{l\,m}\Big|^2 \nonumber \\
-	\text{for l=2, m=2 mode}\\
-	\mathcal{L} &=  \lim_{r \to +\infty} \frac{r^2}{16\,\pi}\Big|\int_{-\infty}^{\infty}dt'\Psi_{4}^{2\,2}\Big|^2 \\
-	\text{And the News function is related to $\Psi_4$ by} \nonumber\\
-\sigma = \int_{-\infty}^{t}dt'\Psi_{4}^{2\,2} 
-\end{align}
- Now let us look at leading order, how this luminosity evolves with time.
- \begin{align}
- 	\frac{d\mathcal{L}_{GW}}{dt} &=  \frac{1}{16\,\pi}\frac{d}{dt}\Big|\int_{-\infty}^{\infty}dt'\Psi_{4}^{2\,2}\Big|^2 = \frac{1}{16\,\pi}\frac{d}{dt}\Big[\int_{-\infty}^{t}dt'\bar{\Psi}_{4}^{2\,2}(t')\int_{-\infty}^{t}dt''\Psi_{4}^{2\,2}(t'')\Big]\\
- 	&=\frac{1}{16\,\pi}\Big[\bar{\Psi}_{4}^{2\,2}(t)\int_{-\infty}^{t}dt'\Psi_{4}^{2\,2}(t') + \Psi_{4}^{2\,2}(t)\int_{-\infty}^{t}dt'\bar{\Psi}_{4}^{2\,2}(t')\Big] \nonumber\\
- 	&=\frac{1}{16\pi}\Big[\ddot{\bar{\sigma}}(t)\dot{\sigma}(t) + \dot{\bar{\sigma}}(t)\ddot{\sigma}(t)\Big] = \frac{1}{8\pi}\Re\Big[\ddot{\bar{\sigma}}(t)\dot{\sigma}(t)\Big]\nonumber
- \end{align}
- 
- \subsubsection{Luminosity from a binary system}
- 
- Now let us look at how at leading order the luminosity of binary source which is shedding mass evolve with time 
- \begin{align}
- 	\mathcal{L}_{GW} & = \frac{32}{5}\frac{M^3\,\mu^2}{r^5}\nonumber\\
- 	\frac{d\mathcal{L}_{GW}}{dt} & = \frac{32M^3\mu^2}{5r^5}\Big[\frac{3}{M}\frac{dM}{dt} + \frac{2}{\mu}\frac{d\mu}{dt} - \frac{5}{r}\frac{dr}{dt}\Big]
- \end{align}
- 
-The radiation reaction has a negligible effect on dynamics of the perturber inside ISCO, so we model the rate of mass loss as source of rate of Luminosity change. The Mass of the central black holes is much larger then the mass of the perturber.  
-
-\subsubsection{Mass, Momentum and Angular momentum loss of a perturbed spacetime}
-We can use the time evolution of mass aspect, equation 2.58 in ref\cite{Adamo_2009} to relate the news amplitude to the mass and angular momentum loss. 
+We assume that the perturber is loosing mass at given rate $\dot{\epsilon}$. Given this and looking at Bianchi identity on asymptotically flat space time, we can also deduce how the source mass is evolving. One of the Bianchi identity on asymptotically flat space-time is given by 
 \begin{equation}
-	\dot{\Psi} = \dot{\sigma}\dot{\bar{\sigma}} + k\phi^{0}_{2}\bar{\phi}^{0}_{2}
+		\dot{\psi}_2 = - \eth^{2}\dot{\bar{\sigma}}^{o} - {\sigma}^{o}\ddot{\bar{\sigma}}^{o}
 \end{equation}
+The right hand side of the above equation has an asymmetric first term and a symmetric second terms, this motivate us to think of the first terms to be related to inspiraling in perturber and the second terms to be related to the central black hole.\\    
+ In this model where we assume both perturber and source mass evolving in time, we want to relate $\epsilon$ to the gravitational strain. We assume the perturber is crossing light right and beyond ISCO the effect of radiation reaction is negligible. In this case the source of gravitational radiation comes from the mass loss by the perturber and the central black hole. Let us look at the expression of luminosity for a inspiraling in perturber at leading order and how it evolves with peturber's mass.
+ \begin{align}
+ \mathcal{L}_{GW} & = \frac{32}{5}\frac{M^3\,\mu^2}{r^5}\nonumber\\
+ \text{let} \;\; \mu \rightarrow \mu - \epsilon \implies \mathcal{L}_{GW} &= \frac{32}{5}\frac{M^3\left(\mu-\epsilon\right)^2}{r^5} \; \; \text{where} \;\; \epsilon \ll \mu\\
+ \implies \delta\mathcal{L}_{GW} & = - \frac{32}{5}\frac{M^3\,\mu^2}{r^5}\epsilon\nonumber\\
+ \text{Now} \;\; \dot{\epsilon} \propto -|\dot{\sigma^{o}}|^{2} \implies \epsilon &= \int_{t_0}^{t}|\dot{\sigma^{o}}|^{2}dt
+ \label{LuminosityMasslossRelation}
+ \end{align}         
+ 
+ Now we have the following model for $\psi_{2}$.
+ \begin{equation}
+ 	\psi_{2} = -\epsilon + \frac{d\epsilon}{dt}\int\epsilon\,dt
+ 	\label{psi2Model}
+ \end{equation}
 
-In the absence of electromagnetic fields we set the second term in right hand side to zero. The above equation then is related to mass and angular momentum loss of the perturbed space time with the radiated GWs strain. 
-\begin{equation}
-	\dot{\Psi} = -\frac{2\sqrt{2}G}{c^2}\dot{M} -\frac{6G}{c^3}\dot{P}^iY^{0}_{1\,i} + ...
-\end{equation}  
 
-We can use the above results to get an insight into how mass and angular momentum are related. For the case of gravitational wave emitted the merger waveform is well described by BOB model. We have 
+\subsubsection{$\psi_{2}$ \; for different waveform models }
+
+We can use Eqn\;\ref{psi2Model} and \ref{LuminosityMasslossRelation} to construct $\psi_{2}$ for BOB model. Using Eqn. 5 from \cite{McWilliams_2019} we have  
 \begin{equation}
 	|\psi_4| = A_{p}\text{sech}[\gamma(t-t_p)]
 \end{equation}
 Since $|\sigma|\approx |\psi|/\omega$ for quasi circular systems. Where $\omega_{l\,m} = m\,\Omega$ and
 \begin{equation}
 	\Omega = \Biggl\{\Omega^{4}_{0} + k\Big[\tanh\Big(\frac{t-t_p}{\tau}\Big) -\tanh\Big(\frac{t_0-t_p}{\tau}\Big)\Big]\Biggr\}^{1/4}
+	\label{Omega}
 \end{equation}
 where the constant k is given by
 \begin{equation}
 	k = \Bigg[\frac{\Omega^{4}_{QNM} - \Omega^4_{0}}{1-\tanh[(t_0-t_p)/\tau]}\Bigg]
+	\label{k}
 \end{equation}
 
-Using equation 2.6 and 2.7 at leading order, we can relate the mass loss rate to the time derivative of GWs strain. Setting $c = G = 1$ we see that equation 
+Using Eqn. \ref{Omega} and \ref{k}, at leading order we can relate the mass loss rate to the time derivative of GWs strain. Setting $c = G = 1$ we see that equation 
 
 \begin{equation}
 	|\dot{\sigma}|^2 = -2\sqrt{2}\dot{M} = \frac{|\psi_4|^2}{4\Omega^2}
 \end{equation}
-To look at how the Mass evolves near the peak, we Taylor expand $|\dot{\sigma}|^2$ around the peak.
+
 \begin{figure}
 	\includegraphics[width=4.0in]{../plots/SigmaSqr.pdf}
 	\caption{The figure above shows stain amplitude from BOB}
 	\label{fig:SigmaSqr}
 \end{figure} 
-\subsubsection{Motivating $\psi_2$ from Bianchi identity on asymptotically flat space-time}
-One of the Bianchi identity on asymptotically flat space-time is given by,
-
-\begin{equation}
-	\dot{\psi}_2 = - \eth^{2}\dot{\bar{\sigma}}^{o} - {\sigma}^{o}\ddot{\bar{\sigma}}^{o}
-\end{equation}
+Using Bianchi identity on asymptotically flat space-time and the expression for $\psi_{4}$
 Now for $\sigma$ in the above expression is related to $\psi_4$ in the following way.
 \begin{equation}
 	\ddot{\bar{\sigma}}^{o} = r\left(\ddot{h}_{+} + i\, \ddot{h}_{\times}  \right)
@@ -218,6 +202,9 @@ The above expression, which is the left hand side of super momentum balance can 
 	$\psi_2 = \int_{t_1}^{t_2}\big|\frac{dh}{dt}\big|^{2}dt$ }
 	\label{fig:RHSvsLHS}
 \end{figure}
+\begin{equation}
+	\psi_{2} = -\epsilon + \frac{d\epsilon}{dt}\int_{t1}^{t2}\epsilon \,dt
+\end{equation}
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
