@@ -205,6 +205,42 @@ The above expression, which is the left hand side of super momentum balance can 
 \begin{equation}
 	\psi_{2} = -\epsilon + \frac{d\epsilon}{dt}\int_{t1}^{t2}\epsilon \,dt
 \end{equation}
+
+\section{Computing $\psi_{2}$ within Effective-One-Body(EOB formalism)}
+Computing $\psi_{2}$ with in EOB formalism requires the knowledge of effective metric which includes radiation reaction. This requires mapping between the Post-Newtonian Hamiltonian and the EOB Hamiltonian. Hamiltonian in general are not unique and upto a canonical transformation would give the same equation of motion. The Hamiltonian describing the dynamics of binary using either Post-Newtonian theory or Effective one body should have the same gauge invariant quantities. These gauge invariant quantities includes the binding energy of binary in circular orbit, scattering angle of black holes etc.  In order include the effect of radiation reaction, we begin by looking at the motion of a point particle in some effective metric. The equations of motion can be derived by considering an action in the following way,
+\begin{equation}
+	S_{point\,mass} -\int d\sigma\left(p_\mu u^\mu - \lambda\left(g^{\mu\nu} p_\mu p_\nu +  m^2\right)\right)
+	\label{Action pp}
+\end{equation}
+where $\sigma$ is some parameter along the worldline of the particle and $\lambda$ is the Lagrange multiplier, which is also a function of parameter $\sigma$. Here the conjugate momentum $p^\mu$ is defined using the particle Lagrangian and the particle velocity in the following way
+\begin{align}
+	L = &-m\sqrt{g_{\mu\nu}u^{\mu}u^{\nu}} \;\;\text{where} \; u^{\mu} = \frac{dx^\mu}{d\sigma} \nonumber \\
+	& \text{and} \; p_{\mu} = \frac{\partial L}{\partial u^{\mu}} \implies L = p_\mu u^\mu
+\end{align}
+$u_\mu u^\mu \neq -1$ in general since there is not always a one to one mapping between $u^\mu$ and $p_\mu$ for any given parameter $\sigma$. But $p_\mu p^\mu = -m^2$ always holds true and we use this as a constraint in the action defined in eqn [\ref{Action pp}]. 
+\subsection{Mapping a two body problem to effective one body}
+The usual approach with in Newtonian gravity to map the two body problem to an effective one body requires going into a frame in which there is a central body which has mass equal to the total mass of the system and a smaller body of reduced mass orbiting the central body. In such mapping the total energy and the linear momentum of the system is conserved. In EOB a similar approach is followed, where the motivation to construct an effect one body Hamiltonian comes from fist looking a non interacting two body system and then constructing an effective one body system where preserve the mass shell condition ($p_\mu p^\mu = -m^2$) and conserve the total linear momentum. \\
+Consider two non interacting particles with four momentum $p_\mu^1$ and $p_\mu^2$. Now let us construct an effective one body system, which would have a total momentum $P^\mu = p_\mu^1 + p_\mu^2$ and a total mass $M = m_1+m_2$. There is no unique way of defining the relative motion but one valid choice is
+\begin{equation}
+	p_\mu = \frac{1}{M}\Bigg(\begin{array}{cc}
+	-p_{1\mu}p_{2}^\mu \\
+	P_0 \overrightarrow{p_1}
+	\end{array}\Bigg)
+\end{equation}
+The definition above has some interesting property that the special part of the momentum reduces to the Newtonian in center of mass coordinates. In COM coordinate frame $P_0$ becomes the $M$ and the time component reduces to the energy of one particle as seen by the frame co moving with the other particle. The above definition gives the following mass shell condition
+\begin{align}
+	-p_\nu p^\nu &= \mu^2 \;\; \text{where} \; \mu = \frac{m_1 m_2}{M}\\
+	-P_\nu P^\nu &= M^2\Bigg[1 + 2\nu \Bigg(\frac{-p_0}{\mu} - 1\Bigg)\Bigg]
+\end{align}
+
+The real and effective Hamiltonian are defined as $H = - P_0\nonumber$ and $He = -p_0$ respectively. Using mass shell condition and these definitions for Hamiltonian we have,
+\begin{equation}
+	H = \sqrt{M^2\Bigg[1 + 2 \nu\Bigg(\frac{H_{eff}}{\mu}-1\Bigg) + \overrightarrow{P}^2\Bigg]}
+\end{equation}
+   
+The relation above is fixed by kinematic mapping between two body system and an effective one body but works quite well even when there is an interaction.  
+
+
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
