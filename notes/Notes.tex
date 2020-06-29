@@ -236,11 +236,26 @@ The definition above has some interesting property that the special part of the 
 The real and effective Hamiltonian are defined as $H = - P_0\nonumber$ and $He = -p_0$ respectively. Using mass shell condition and these definitions for Hamiltonian we have,
 \begin{equation}
 	H = \sqrt{M^2\Bigg[1 + 2 \nu\Bigg(\frac{H_{eff}}{\mu}-1\Bigg) + \overrightarrow{P}^2\Bigg]}
+	\label{Real Hamiltonian}
 \end{equation}
    
-The relation above is fixed by kinematic mapping between two body system and an effective one body but works quite well even when there is an interaction.  
-
-
+The relation above is fixed by kinematic mapping between two body system and an effective one body but works quite well even when there is an interaction. 
+\subsection{$\psi_{2}$ for EOB} 
+In EOB approach we have a reduced mass particle $\mu$ moving in some effective background metric $\text{g}^{\text{eff}}_{\mu\nu}\left(x^{\lambda}, GM, \nu\right)$ created by a central body of larger mass. The Weyl scalar $\psi_{2}$ for a spherically symmetric body is essentially the total interior ADM mass. For example equation 10.0 in ref\cite{Newman:2014} gives the expression for $\psi_{2}$ of Kerr metric. The correction to this $\psi_{2}$ due to presence of a point particle in circular orbit is given in equation 58.0 in ref\cite{Merlin2016PRD}  The total ADM mass of the interior space time consist of the mass of the central body and the mass of the orbiting body. The total ADM mass of the system changes as the particle inspirals. The ADM mass of the central body is equal to Hamiltonian given in equation \ref{Real Hamiltonian} ($M_{AMD} = H$). So at leading order evolution of $\psi_{2}$ can be described by the the time evolution of the real Hamiltonian $H$. The real Hamiltonian is given by
+    \begin{equation}
+    	\hat{H}_{EOB}(r, p_{r_*}, \varphi) = \frac{H^{real}_{EOB}}{\mu} = \frac{1}{\nu}\sqrt{1 + 2\nu\left(\hat{H}_{\text{eff}}-1\right)}\nonumber
+    \end{equation}
+where
+\begin{align}
+\hat{H}_{\text{eff}} = \sqrt{p^2_{r_*} + A\left(r\right)\Bigg(1 + \frac{p_{\varphi}^2}{r^2} + z\frac{p_{r_*}^4}{r^2}\Bigg)}
+\end{align}
+with $z_3 = 2\nu(4-3\nu)$. The equation of motion for $\left(r, \varphi, p_{r_*}, p_{\varphi}\right)$ is given by
+\begin{align}
+	\frac{d\varphi}{dt} &= \frac{\partial\hat{H}_{EOB}}{\partial p_{\varphi}} \equiv \Omega\\
+	\frac{dr}{dt} &=\left(\frac{A}{B}\right)^{1/2}\frac{\partial\hat{H}_{EOB}}{\partial p_{r_*}}\\
+	\frac{dp_{\varphi}}{dt} &=\hat{\mathscr{F}}_{\varphi}'\\
+	\frac{dp_{r_*}}{dt} &=-\left(\frac{A}{B}\right)^{1/2}\frac{\partial\hat{H}_{EOB}}{\partial r}
+\end{align}
 \section*{References}
 
 \bibliographystyle{apsrev4-1}

@@ -20,11 +20,11 @@ H_time = np.linspace(HP.sample_times[0],HP.sample_times[-1], len(H_amp))
 
 
 print(max(H_complex.real))
-#plt.plot(HP.sample_times/(40*4.9*pow(10, -6)), HP/max(abs(H_tot)))
-#plt.plot(HP.sample_times/(40*4.9*pow(10, -6)), H_complex.real , '--k')
+plt.plot(HP.sample_times/(40*4.9*pow(10, -6)), HP/max(abs(H_tot)))
+plt.plot(HP.sample_times/(40*4.9*pow(10, -6)), H_complex.real , '--k')
 
-#plt.xlim(-200, 50)
-#plt.show()
+plt.xlim(-200, 50)
+plt.show()
 
 
 f = open("/home/ashok/constraintongwwaveform/data/EOB_wf.txt","w") 
