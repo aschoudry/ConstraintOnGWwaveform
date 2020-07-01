@@ -3,9 +3,9 @@
 Ashok , 2020-7-29
 """
 from scipy.integrate import odeint 
-import matplotlib.pyplot as plt
 import numpy as np 
 from numpy.core.umath_tests import inner1d
+import PN_radiationReaction as PN_RR
 
 'Coupled ODEs Solver'
 #	intial_conditions(w) = array[r0, phi0, p_r0, p_phi0]
@@ -29,7 +29,7 @@ def Coupled_HamiltonianODEs_solver(initial_condition, domain, parameter_values):
 
 def derivs(w, v, p):
 
-	r, phi, p_r, p_phi = w
+	r, p_r, phi, p_phi = w
 	nu = p  #parameters 
 	
         dphi_bydt= dphi_by_dt(r, p_r, phi, p_phi, nu)
@@ -37,8 +37,7 @@ def derivs(w, v, p):
         dp_phi_bydt= dp_phi_by_dt(r, p_r, phi, p_phi, nu)
         dp_r_bydt= dp_r_by_dt(r, p_r, phi, p_phi, nu)
 
-	return  dphi_bydt, dr_bydt, dp_phi_bydt, dp_r_bydt
-
+	return dr_bydt, dp_r_bydt,  dphi_bydt, dp_phi_bydt
 """Expression for RHS of ODE. Eqn 3.8 to 3.11 in Notes,
    We is geomatrized units
 """
@@ -46,15 +45,14 @@ def derivs(w, v, p):
 #####  Potentials and Hamiltonian ########
 def A(r, nu):
     u=1.0/r
-    return 1- 2*(u) + 2*nu*(u**3)
+    return 1-2*(u)+2*nu*(u**3)
 def Ap(r, nu):
     u=1.0/r
-    return (2*u**2) -6.0*u**4
+    return (2*u**2)-nu*6.0*u**4
 
 def B(r, nu):
     u=1.0/r
-    D=1-6*nu*(u**2) + 2*(3*nu-26)*nu*(u**3)
-    return D/A(r, nu)
+    return 1+2*u+2*(2-3*nu)*(u**2) 
 
 def Heff(r, p_r, phi, p_phi, nu):
     z3 = 2*nu*(4-3*nu)
@@ -76,7 +74,9 @@ def dr_by_dt(r, p_r, phi, p_phi, nu):
     return a*b
 
 def dp_phi_by_dt(r, p_r, phi, p_phi, nu):
-    return 0
+    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+    forceRR = PN_RR.f_phi(omega, nu)
+    return forceRR
 
 def dp_r_by_dt(r, p_r, phi, p_phi, nu):
     z3 = 2*nu*(4-3*nu)
