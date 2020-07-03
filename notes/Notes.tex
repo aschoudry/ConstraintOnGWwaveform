@@ -253,9 +253,42 @@ with $z_3 = 2\nu(4-3\nu)$. The equation of motion for $\left(r, \varphi, p_{r_*}
 \begin{align}
 	\frac{d\varphi}{dt} &= \frac{\partial\hat{H}_{EOB}}{\partial p_{\varphi}} \equiv \Omega\\
 	\frac{dr}{dt} &=\left(\frac{A}{B}\right)^{1/2}\frac{\partial\hat{H}_{EOB}}{\partial p_{r_*}}\\
-	\frac{dp_{\varphi}}{dt} &=\hat{\mathscr{F}}_{\varphi}'\\
+	\frac{dp_{\varphi}}{dt} &=\hat{\mathscr{F}}_{\varphi}\\
 	\frac{dp_{r_*}}{dt} &=-\left(\frac{A}{B}\right)^{1/2}\frac{\partial\hat{H}_{EOB}}{\partial r}
 \end{align}
+which explicitly read
+\begin{align}
+\frac{d\varphi}{dt} &= \frac{A p_{\varphi}}{\nu r^2 \hat{H}\hat{H}_{\text{EOB}}} \equiv \Omega\\
+\frac{dr}{dt} &=\left(\frac{A}{B}\right)^{1/2}\frac{1}{\nu\hat{H}\hat{H}_{\text{EOB}}}\Bigg(p_{r_*} + z_{3}\frac{2A}{r^2}p_{r_*}^3\Bigg)\\
+\frac{dp_{\varphi}}{dt} &=\hat{\mathscr{F}}_{\varphi}\\
+\frac{dp_{r_*}}{dt} &=-\left(\frac{A}{B}\right)^{1/2}\frac{1}{2\nu\hat{H}\hat{H}_{\text{EOB}}}\Bigg\{A' + \frac{p_{\varphi}^2}{r^2}\Bigg(A'- \frac{2A}{r}\Bigg) + z_3\Bigg(\frac{A'}{r^2}- \frac{2A}{r^3}\Bigg)p_{r_*}^4\Bigg\}
+\end{align}
+where $A' = dA/dr$. For circular orbits the radiation reaction force can be defined as
+\begin{equation}
+	\hat{\mathscr{F}}_{\varphi} = -\frac{1}{\Omega}F^{(l_{max})}
+\end{equation}
+where the instantaneous, circular GW flux $F^{(l_{max})}$ is defined as
+\begin{equation}
+	F^{(l_{max})} = \frac{2}{16\pi G}\sum_{l=2}^{l_{max}}\sum_{m=1}^{l}\left(m\Omega\right)^{2} |Rh_{lm}|^2.
+\end{equation}
+We can use post-Newtonian expression for dominant $h_{22}$ mode given by
+\begin{align}
+	h^{22}=\frac{2Gm\nu x}{R c^2}\sqrt{\frac{16\pi}{5}}H^{22}\exp^{-i m \psi}
+\end{align}
+where
+\begin{align}
+	H^{22} &= 1 + x\,\Bigg(-\frac{107}{42} + \frac{55}{42}\nu\Bigg) + 2\pi x^{3/2} + x^2\,\Bigg(-\frac{2173}{1512}- \frac{1069}{216}\nu + \frac{2047}{1512}\nu^2\Bigg)\nonumber\\
+	&+x^{5/2}\Bigg(-\frac{107\pi}{21} - 24i\nu + \frac{34\pi}{21}\nu\Bigg) + x^3\,\Bigg(\frac{27027409}{646800} - \frac{856}{105}\gamma_E + \frac{428\pi}{105}i +  \frac{2\pi^2}{3}\Bigg)\nonumber\\
+	&+ \Bigg(-\frac{278185}{33264} + \frac{41\pi^2}{96}\Bigg)\nu -\frac{20261}{2772}\nu^2 + \frac{114635}{99792}\nu^2 - \frac{428}{105}\ln\left(16x\right)\nonumber\\
+	&+x^{7/2}\Bigg(-\frac{2173\pi}{756} + \Bigg(-\frac{2495\pi}{378} + \frac{14333}{162}i\Bigg)\nu + \Bigg(\frac{40\pi}{27}-\frac{4066}{945}i\Bigg)\nu^2\Bigg)
+\end{align}
+Solving the above equations of motions we obtain $\psi_{2}^0(t) = \hat{H}_{EOB}(t)$ which is equal to $M_{ADM}$ of the Schwarzschild background.
+\begin{figure}
+	\includegraphics[width=3.0in]{../plots/OrbitEOB50.pdf}
+	\includegraphics[width=3.0in]{../plots/OrbitEOB10.pdf}
+	\caption{The figure shows the trajectory of a point particle on initially on circular orbit inspiralling in due to radiation of gravitational waves. The figure to the left shows particle initially at r=50M and the right figure shows the particle which is initially at 10M}
+	\label{fig:BoBFig}
+\end{figure} 
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
