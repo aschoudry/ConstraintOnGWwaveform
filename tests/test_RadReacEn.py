@@ -10,12 +10,12 @@ def CircularPr(r, nu):
     return np.sqrt(ODEs.Ap(r, nu)*(r**2)/(2*ODEs.A(r, nu)/r - ODEs.Ap(r, nu)))
  
 ## Initial conditions ##
-r0 = 10
+r0 = 5.6
 
 w0 = r0, 0.0, 0, CircularPr(r0, 0.25) 
 
 p=0.25 # parameter nu
-t_vec = np.arange(0, 6000, 0.5)
+t_vec = np.arange(0, 12000, 1)
 
 ## Solve ODEs
 yvec = ODEs.Coupled_HamiltonianODEs_solver(w0, t_vec, p)

@@ -6,6 +6,7 @@ from scipy.integrate import odeint
 import numpy as np 
 from numpy.core.umath_tests import inner1d
 import PN_radiationReaction as PN_RR
+from scipy.special import gamma
 
 'Coupled ODEs Solver'
 #	intial_conditions(w) = array[r0, phi0, p_r0, p_phi0]
@@ -62,7 +63,7 @@ def Heob(r, p_r, phi, p_phi, nu):
     return (1.0/nu)*np.sqrt(1+ 2*nu*(Heff(r, p_r, phi, p_phi, nu)-1))
 
 
-##### ODE #################
+##### ODE ##############################################################
 
 def dphi_by_dt(r, p_r, phi, p_phi, nu):
     return A(r, nu)*p_phi/(nu*(r**2)*Heff(r, p_r, phi, p_phi, nu)*Heob(r, p_r, phi, p_phi, nu))
@@ -75,7 +76,9 @@ def dr_by_dt(r, p_r, phi, p_phi, nu):
 
 def dp_phi_by_dt(r, p_r, phi, p_phi, nu):
     omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
-    forceRR = PN_RR.f_phi(omega, nu)
+
+    forceRR = f_phi(r, p_r, phi, p_phi, nu)
+    #forceRR = PN_RR.f_phi(omega, nu, 3)
     return forceRR
 
 def dp_r_by_dt(r, p_r, phi, p_phi, nu):
@@ -85,8 +88,83 @@ def dp_r_by_dt(r, p_r, phi, p_phi, nu):
     return a*b
 
 
+###################### EOB Radiation reaction force ##########################
 
 
+def rho(x, nu, PN_order):
+    
+    gammaE = 0.57725
+    eulerlog2 = gammaE + 2.0*np.log(2) + (1.0/2)*np.log(x)
 
+    B0 = 1
+    B1 = 55.0*nu/84.0 - 43.0/42
+    B2 = 19583*pow(nu,2)/42336.0 - 33025.0*nu/21168.0 - 20555.0/10584.0
+    B3 = 10620745.0*pow(nu,3)/39118464.0 - 6292061.0*pow(nu,2)/3259872.0 + 41.0*pow(np.pi,2)*nu/192 - 48993925.0*nu/9779616.0\
+            - 428.0*eulerlog2/105.0 + 1556919113.0/122245200.0
+    B4 = 9202.0*eulerlog2/2205.0 - 387216563023.0/160190110080.0
+    B5 = 439877.0*eulerlog2/55566.0 - 16094530514677.0/533967033600.0
 
+    if PN_order==0:
+    	rh = (B0)
+    if PN_order==1:
+    	rh = (B0 + B1*x) 	
+    if PN_order==2:
+    	rh = (B0 + B1*x + B2*pow(x,2))
+    if PN_order==3:
+    	rh = (B0 + B1*x  + B2*pow(x,2)+ B3*pow(x,3))
+    if PN_order==4:
+    	rh = (B0 + B1*x  + B2*pow(x,2)+ B3*pow(x,3)+ B4*pow(x,4))
+    if PN_order==5:
+    	rh = (B0 + B1*x  + B2*pow(x,2)+ B3*pow(x,3)+ B4*pow(x,4)+ B5*pow(x,5))
+	
+    return abs(rh)
+
+def delta22(r, p_r, phi, p_phi, nu):
+    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+    Hreal = Heob(r, p_r, phi, p_phi, nu)
+
+    x=pow(omega, 2.0/3)
+    yb=x
+    y=pow(Hreal*omega, 2.0/3.0)
+
+    d22 = (7.0/3.0)*pow(y, 3.0/2.0) +  (428.0*np.pi/105.0)*pow(y, 3) - 24*nu*pow(yb, 5.0/2.0)
+    return d22
+
+def Seff(r, p_r, phi, p_phi, nu):
+    return Heff(r, p_r, phi, p_phi, nu)
+
+def T22(r, p_r, phi, p_phi, nu):
+    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+    Hreal = Heob(r, p_r, phi, p_phi, nu)
+    T1 = (gamma(3.0 -4.0*1j*omega*Hreal)/gamma(3))
+    T2 = np.exp(2*np.pi*omega*Hreal)
+    T3 = np.exp(4*1j*omega*Hreal*np.log(8.0*omega))
+    return T1*T2*T3
+
+def Y2m2(theta, phi):
+    return (1.0/4.0)*np.sqrt(15.0/(2*np.pi))*np.exp(-2*1j*phi)*(np.sin(theta)**2)
+
+def Rh22(r, p_r, phi, p_phi, nu):
+    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+    x=pow(omega, 2.0/3)
+    PN_order=5
+
+    n22 = -4*8*np.pi*np.sqrt(6)/(15)
+    c22 = 1
+    y2m2 = Y2m2(np.pi/2.0, phi)
+    seff = Seff(r, p_r, phi, p_phi, nu)
+    t22 = T22(r, p_r, phi, p_phi, nu)
+    rh = rho(x, nu, PN_order)
+
+    return nu*n22*c22*pow(x,2)*y2m2*seff*t22*pow(rh,2)
+
+# Radiation reaction force
+def f_phi(r, p_r, phi, p_phi, nu):  
+    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+    x=pow(omega, 2.0/3)
+
+    absh22 = abs(Rh22(r, p_r, phi, p_phi, nu))
+    Fl = (2.0/(16*np.pi))*((2*omega)**2)*absh22*absh22
+    F=-Fl/omega
+    return F
 
