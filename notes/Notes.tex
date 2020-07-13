@@ -240,8 +240,13 @@ The real and effective Hamiltonian are defined as $H = - P_0\nonumber$ and $He =
 \end{equation}
    
 The relation above is fixed by kinematic mapping between two body system and an effective one body but works quite well even when there is an interaction. 
-\subsection{$\psi_{2}$ for EOB} 
-In EOB approach we have a reduced mass particle $\mu$ moving in some effective background metric $\text{g}^{\text{eff}}_{\mu\nu}\left(x^{\lambda}, GM, \nu\right)$ created by a central body of larger mass. The Weyl scalar $\psi_{2}$ for a spherically symmetric body is essentially the total interior ADM mass. For example equation 10.0 in ref\cite{Newman:2014} gives the expression for $\psi_{2}$ of Kerr metric. The correction to this $\psi_{2}$ due to presence of a point particle in circular orbit is given in equation 58.0 in ref\cite{Merlin2016PRD}  The total ADM mass of the interior space time consist of the mass of the central body and the mass of the orbiting body. The total ADM mass of the system changes as the particle inspirals. The ADM mass of the central body is equal to Hamiltonian given in equation \ref{Real Hamiltonian} ($M_{AMD} = H$). So at leading order evolution of $\psi_{2}$ can be described by the the time evolution of the real Hamiltonian $H$. The real Hamiltonian is given by
+\subsection{$\psi_{2}^{0}$ for EOB} 
+The Weyl scalar $\psi_{2}$ for a Schwarzschild space time is given by 
+\begin{equation}
+	\psi_{2} = -\frac{M}{r^3} \implies \psi_{2}^{0} = -M
+\end{equation} 
+
+In EOB approach we have a reduced mass particle $\mu$ moving in some effective background metric $\text{g}^{\text{eff}}_{\mu\nu}\left(x^{\lambda}, GM, \nu\right)$ created by a central body of larger mass. The Weyl scalar $\psi_{2}$ for a spherically symmetric body is essentially the total interior ADM mass ($M_{\text{ADM}} = M$ + binding energy). For example equation 10.0 in ref\cite{Newman:2014} gives the expression for $\psi_{2}$ of Kerr metric. The correction to this $\psi_{2}$ due to presence of a point particle in circular orbit is given in equation 58.0 in ref\cite{Merlin2016PRD}  The total ADM mass of the interior space time consist of the mass of the central body and the mass of the orbiting body. The total ADM mass of the system changes as the particle inspirals. The ADM mass of the central body is equal to Hamiltonian given in equation \ref{Real Hamiltonian} ($M_{AMD} = H$). So at leading order evolution of $\psi_{2}$ can be described by the the time evolution of the real Hamiltonian $H$. The real Hamiltonian is given by
     \begin{equation}
     	\hat{H}_{EOB}(r, p_{r_*}, \varphi) = \frac{H^{real}_{EOB}}{\mu} = \frac{1}{\nu}\sqrt{1 + 2\nu\left(\hat{H}_{\text{eff}}-1\right)}\nonumber
     \end{equation}
@@ -273,22 +278,43 @@ where the instantaneous, circular GW flux $F^{(l_{max})}$ is defined as
 \end{equation}
 We can use post-Newtonian expression for dominant $h_{22}$ mode given by
 \begin{align}
-	h^{22}=\frac{2Gm\nu x}{R c^2}\sqrt{\frac{16\pi}{5}}H^{22}\exp^{-i m \psi}
+	h_{lm}^{\left(\epsilon\right)} = \frac{GM\nu}{c^2 R}n_{lm}^{\epsilon}c_{l+\epsilon}\left(\nu\right)x^{\left(l+\epsilon\right)/2}Y^{l-\epsilon,-m}\bigg(\frac{\pi}{2}, \Phi\bigg)\hat{S}_{\text{eff}}^{\epsilon}T_{lm}e^{i\delta_{lm}}\rho_{lm}^l
 \end{align}
 where
-\begin{align}
-	H^{22} &= 1 + x\,\Bigg(-\frac{107}{42} + \frac{55}{42}\nu\Bigg) + 2\pi x^{3/2} + x^2\,\Bigg(-\frac{2173}{1512}- \frac{1069}{216}\nu + \frac{2047}{1512}\nu^2\Bigg)\nonumber\\
-	&+x^{5/2}\Bigg(-\frac{107\pi}{21} - 24i\nu + \frac{34\pi}{21}\nu\Bigg) + x^3\,\Bigg(\frac{27027409}{646800} - \frac{856}{105}\gamma_E + \frac{428\pi}{105}i +  \frac{2\pi^2}{3}\Bigg)\nonumber\\
-	&+ \Bigg(-\frac{278185}{33264} + \frac{41\pi^2}{96}\Bigg)\nu -\frac{20261}{2772}\nu^2 + \frac{114635}{99792}\nu^2 - \frac{428}{105}\ln\left(16x\right)\nonumber\\
-	&+x^{7/2}\Bigg(-\frac{2173\pi}{756} + \Bigg(-\frac{2495\pi}{378} + \frac{14333}{162}i\Bigg)\nu + \Bigg(\frac{40\pi}{27}-\frac{4066}{945}i\Bigg)\nu^2\Bigg)
-\end{align}
-Solving the above equations of motions we obtain $\psi_{2}^0(t) = \hat{H}_{EOB}(t)$ which is equal to $M_{ADM}$ of the Schwarzschild background.
+
+Solving the above equations of motions we obtain $\psi_{2}^0(t) = \hat{H}_{EOB}(t)$ which is equal to $M_{ADM}$ of the Schwarzschild background. The presence of orbiting point particle does modify $\psi_{2}^0$. One gauge dependent way in which a particle in circular orbit around Schwarzschild background modifies $\psi_{2}^0$ is given by \cite{Merlin2016PRD}
+\begin{equation}
+	\psi_{2}^{0\left(1\right)}(t) = \mathcal{E}
+\end{equation}
+where
+\begin{equation}
+	\mathcal{E} = -\mu u_{t} = \mu\left(1-\frac{2M}{r_0}\right)\left(1- \frac{3M}{r_0}\right)^{-1/2}
+\end{equation}
+$\mu$ is the reduced mass and $r_0$ is the radial coordinate of orbiting particle.
 \begin{figure}
 	\includegraphics[width=3.0in]{../plots/OrbitEOB50.pdf}
-	\includegraphics[width=3.0in]{../plots/OrbitEOB10.pdf}
-	\caption{The figure shows the trajectory of a point particle on initially on circular orbit inspiralling in due to radiation of gravitational waves. The figure to the left shows particle initially at r=50M and the right figure shows the particle which is initially at 10M}
+	\includegraphics[width=3.0in]{../plots/OrbitEOB15.pdf}
+	\includegraphics[width=3.0in]{../plots/h22EOB.pdf}
+	\includegraphics[width=3.0in]{../plots/Psi2EOBHamiltonia.pdf}
+	\caption{The figure shows the trajectory of a point particle on initially circular orbit inspiralling in due to radiation of gravitational waves. The figure to the left shows particle initially at r=50M and the right figure shows the particle which is initially at 15M}
 	\label{fig:BoBFig}
 \end{figure} 
+
+\section{$\psi_{2}$ for perturbed Black Hole using perturbation theory}
+The description of black holes with Newman-Penrose formalism is given in terms of 5 complex Weyl scalars and 12 spin coefficients. The Schwarzschild and Kerr space-time fall into type D under Petrov classification, which gives freedom to set four of Weyl scalar $\Psi_0$, $\Psi_1$, $\Psi_3$, $\Psi_0$ and five spin coefficient $\kappa$, $\sigma$, $\lambda$, $\nu$,  to zero. This freedom is a result of allowed Lorentz transformation. \\
+When a Kerr black-hole is gravitationally perturbed, the quantities which vanish in stationary space-time will cease to vanish and quantities which are finite will experience first order change. As a result the gravitational perturbation will be given by equation 101 chapter 9 \cite{Chandrasekhar:579245}      
+\begin{equation}
+	\Psi_0, \Psi_1, \Psi_3, \Psi_4, \kappa, \sigma, \lambda \, \, \text{and} \, \,\nu
+\end{equation}
+and 
+\begin{align}
+	&\Psi_{2}^{\left(1\right)}, \tilde{\rho}^{\left(1\right)}, \tau^{\left(1\right)}, \mu^{\left(1\right)}, \alpha^{\left(1\right)}, \beta^{\left(1\right)}, \gamma^{\left(1\right)}, \epsilon^{\left(1\right)} \nonumber \\
+	&\boldsymbol{l}^{\left(1\right)}, \boldsymbol{n}^{\left(1\right)}, \boldsymbol{m}^{\left(1\right)} \,\, \text{and} \,\, \boldsymbol{\tilde{m}}^{\left(1\right)}
+\end{align}
+where the superscript ``(1)'' in the second set of quantities distinguishing them from their unperturbed values in the stationary state. The four Bianchi identities which has $\Psi_{2}$ after taking into account the linear perturbation and throwing higher order term are 
+\begin{equation}
+	D\Psi_{2} = 3\tilde{\rho}\Psi_{2}, \,\, \Delta\Psi_{2} = -3\mu\Psi_{2},  \,\, \delta\Psi_{2} = 3\tau\Psi_{2} \,\, \text{and} \,\, \delta^{*}\Psi_{2} = 3\pi\Psi_{2}
+\end{equation}  
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
