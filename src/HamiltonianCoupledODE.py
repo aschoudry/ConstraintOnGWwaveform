@@ -15,30 +15,30 @@ from scipy.special import gamma
 
 def Coupled_HamiltonianODEs_solver(initial_condition, domain, parameter_values):
 
-	w0 = initial_condition
-	p = parameter_values
-	t_vec = domain
+    w0 = initial_condition
+    p = parameter_values
+    t_vec = domain
 	
-	abserr = 1.0e-8                         # error control parameters
-	relerr = 1.0e-6
+    abserr = 1.0e-8                         # error control parameters
+    relerr = 1.0e-6
 
-	yvec = odeint(derivs, w0, t_vec, args = (p,), atol=abserr, rtol=relerr)
- 	return yvec
+    yvec = odeint(derivs, w0, t_vec, args = (p,), atol=abserr, rtol=relerr)
+    return yvec
 
 
 'Derivatives'
 
 def derivs(w, v, p):
 
-	r, p_r, phi, p_phi = w
-	nu = p  #parameters 
+    r, p_r, phi, p_phi = w
+    nu = p  #parameters 
 	
-        dphi_bydt= dphi_by_dt(r, p_r, phi, p_phi, nu)
-        dr_bydt= dr_by_dt(r, p_r, phi, p_phi, nu)
-        dp_phi_bydt= dp_phi_by_dt(r, p_r, phi, p_phi, nu)
-        dp_r_bydt= dp_r_by_dt(r, p_r, phi, p_phi, nu)
+    dphi_bydt= dphi_by_dt(r, p_r, phi, p_phi, nu)
+    dr_bydt= dr_by_dt(r, p_r, phi, p_phi, nu)
+    dp_phi_bydt= dp_phi_by_dt(r, p_r, phi, p_phi, nu)
+    dp_r_bydt= dp_r_by_dt(r, p_r, phi, p_phi, nu)
 
-	return dr_bydt, dp_r_bydt,  dphi_bydt, dp_phi_bydt
+    return dr_bydt, dp_r_bydt,  dphi_bydt, dp_phi_bydt
 """Expression for RHS of ODE. Eqn 3.8 to 3.11 in Notes,
    We is geomatrized units
 """
@@ -156,7 +156,7 @@ def Rh22(r, p_r, phi, p_phi, nu):
     t22 = T22(r, p_r, phi, p_phi, nu)
     rh = rho(x, nu, PN_order)
 
-    return nu*n22*c22*pow(x,2)*y2m2*seff*t22*pow(rh,2)
+    return nu*n22*c22*x*y2m2*seff*t22*pow(rh,2)
 
 # Radiation reaction force
 def f_phi(r, p_r, phi, p_phi, nu):  
@@ -167,4 +167,5 @@ def f_phi(r, p_r, phi, p_phi, nu):
     Fl = (2.0/(16*np.pi))*((2*omega)**2)*absh22*absh22
     F=-Fl/omega
     return F
+
 
