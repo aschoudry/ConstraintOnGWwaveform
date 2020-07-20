@@ -33,8 +33,10 @@ def Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p):
     M = M - M[0]
     Pr = (6.0/2/np.sqrt(2))*p_r*p
     Pr = Pr
+    a = ODEs.A(r, p)
+    b = ODEs.B(r, p)
 
-    return  M + Pr
+    return  M + np.sqrt(b/a)*Pr
 
 
 def Psi2_fromWaveform(t_vec, r, p_r, phi, p_phi, p):
@@ -78,9 +80,9 @@ Omega = ODEs.dphi_by_dt(r, p_r, phi, p_phi, p)
 
 H_EOB = ODEs.Heob(r, p_r, phi, p_phi, p)
 
-plt.plot(t_vec, Psi2_0_Growth(r, p_r, phi, p_phi, p), label = 'EOB')
-plt.plot(t_vec, Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p), label = 'EOB Pr')
-plt.plot(t_vec, Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p), label = 'Balance Equation')
+plt.plot(t_vec, Psi2_0_Growth(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B}$')
+plt.plot(t_vec, Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B} + \frac{6}{2 \sqrt{2}}P_{r}$')
+plt.plot(t_vec, Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p), label = r'$\Psi = \int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2$')
 plt.xlim(0, 5900)
 plt.ylim(-0.06, 0.01)
 plt.xlabel(r'$time$')
@@ -88,6 +90,5 @@ plt.ylabel(r'$\psi_{2}^{0}$')
 plt.legend()
 plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia.pdf')
 plt.show()
-
 
 
