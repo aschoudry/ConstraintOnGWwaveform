@@ -6,6 +6,21 @@ import HamiltonianCoupledODE as ODEs
 import matplotlib.pyplot as plt
 import PN_radiationReaction as PN_RR
 
+# create a time vector with variable resulution
+def time_vec(r0, rf, ng_orbit, ng_radial):
+    t_vec = np.array([])
+    r_vec = np.linspace(r0, rf, ng_radial) 
+    dt_vec = (1.0/ng_radial)*np.sqrt(4*pow(np.pi,2)*pow(r_vec,3)) 
+    dt_vec_full = np.repeat(dt_vec, ng_orbit) 
+    t_vec_full = np.cumsum(dt_vec_full) 
+    return t_vec_full 
+
+# find intex of nearest value in an array
+def find_nearest1(array,value):
+    idx,val = min(enumerate(array), key=lambda x: abs(x[1]-value))
+    return idx
+
+
 def Y22(Theta, Phi):
     return (1.0/4.0)*np.sqrt(15.0/(2*np.pi))*np.sin(Theta)*np.sin(Theta)*np.exp(1j*2.0*Phi)
 
@@ -60,15 +75,41 @@ def Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p):
     Psi2_diff = Int_abs_Sigma_Dot_sqr
     return Psi2_diff
 
-
-## Initial conditions ##
-r0 = 15.0
+##### Initial setup for binary very far ###############################################
+r0 = 50.0
 p=0.25 # parameter nu
 M=1
 w0 = r0, 0.0, 0, CircularPr(r0, p) 
 
 #t_vec = np.arange(0, 525, 0.5)
-t_vec = np.arange(0, 5900, 1)
+#t_vec = np.arange(0, 5900, 1)
+
+t_vec = time_vec(r0, 15, 1388, 100)
+
+
+## Solve ODEs
+yvec = ODEs.Coupled_HamiltonianODEs_solver(w0, t_vec, p)
+
+r, p_r, phi, p_phi = yvec[:,0], yvec[:,1], yvec[:,2], yvec[:,3]
+print(r[-1], p_r[-1])
+
+########################################################################################
+
+## Initial conditions ##
+r0, p_r0, phi0, p_phi0 = r[-1], p_r[-1], phi[-1], p_phi[-1]
+
+p=0.25 # parameter nu
+M=1
+pr0 = p_phi[-1]
+
+w0 = r0, p_r0, phi0, p_phi0 
+
+#w0 = r[-1], 0.0, 0, p_r[-1]
+
+#t_vec = np.arange(0, 525, 0.5)
+#t_vec = np.arange(0, 5900, 1)
+
+t_vec = time_vec(r0, 3, 100, 100)
 
 
 ## Solve ODEs
@@ -76,6 +117,11 @@ yvec = ODEs.Coupled_HamiltonianODEs_solver(w0, t_vec, p)
 
 r, p_r, phi, p_phi = yvec[:,0], yvec[:,1], yvec[:,2], yvec[:,3]
 
+print(find_nearest1(r,3), t_vec[find_nearest1(r,3)])
+idx = find_nearest1(r,3)
+## stop at r=3M
+t_vec, r, p_r, phi, p_phi = t_vec[:idx], r[:idx], p_r[:idx], phi[:idx], p_phi[:idx] 
+t_vec = t_vec - t_vec[-1]
 Omega = ODEs.dphi_by_dt(r, p_r, phi, p_phi, p)
 
 H_EOB = ODEs.Heob(r, p_r, phi, p_phi, p)
@@ -83,12 +129,12 @@ H_EOB = ODEs.Heob(r, p_r, phi, p_phi, p)
 plt.plot(t_vec, Psi2_0_Growth(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B}$')
 plt.plot(t_vec, Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B} + \frac{6}{2 \sqrt{2}}P_{r}$')
 plt.plot(t_vec, Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p), label = r'$\Psi = \int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2$')
-plt.xlim(0, 5900)
+#plt.xlim(0, 5900)
 plt.ylim(-0.06, 0.01)
 plt.xlabel(r'$time$')
-plt.ylabel(r'$\psi_{2}^{0}$')
+#plt.ylabel(r'$\psi_{2}^{0}$')
 plt.legend()
-plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia.pdf')
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia.pdf')
 plt.show()
 
 
