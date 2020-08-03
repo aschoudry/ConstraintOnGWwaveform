@@ -103,7 +103,7 @@ def Psi2_sqr_fromWaveform_BOB(omega0, Ap, tau, t, t0, tp):
     sigma_dd_sqr = Ap/(np.cosh((t-tp)/tau))
     sigma_dot_sqr = pow(sigma_dd_sqr,2)/pow(2*omega,2)
     sigma_dot_sqr = sigma_dot_sqr - sigma_dot_sqr[0]
-    return -np.cumsum(sigma_dot_sqr)*(t[-1]-t[-2])
+    return -np.cumsum(sigma_dot_sqr)*(t[1]-t[0])
 
 
 
@@ -267,13 +267,13 @@ Psi2_0_Growth_BOB_beyondISCO = Psi2_0_Growth_Pr(r_BOB, p_r_BOB, phi_BOB, p_phi_B
 Psi2_0_Growth_resum_beyondISCO = Psi2_0_Growth_Pr(r_resum_beyondISCO, p_r_resum_beyondISCO, phi_resum_beyondISCO, p_phi_resum_beyondISCO, p)
 
 RR_Int_sigmadot = Psi2_sqr_fromWaveform(t_vec_resum , r_resum_beyondISCO, p_r_resum_beyondISCO, phi_resum_beyondISCO, p_phi_resum_beyondISCO, p)
-BOB_Int_sigmadot=Psi2_sqr_fromWaveform_BOB(OM_ISCO, Ap, tau, t_vec_BOB, t0, tp)
+BOB_Int_sigmadot=Psi2_sqr_fromWaveform_BOB(0.068, Ap, tau, t_vec_BOB, t0, tp)
 
 
-plt.plot( t_vec_BOB, Psi2_0_Growth_BOB_beyondISCO,'c', label = r'$\Psi = BOB \; rad \; force$')  #Slight shifted the plots such that they peak at t=0
+plt.plot( t_vec_BOB, Psi2_0_Growth_BOB_beyondISCO,'c', label = r'$\Psi = BOB \; rad \; force$')  
+plt.plot(t_vec_BOB, BOB_Int_sigmadot,'y--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
 plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k--', label = r'$\Psi = Resum \;RR$')
 plt.plot(t_vec_resum, RR_Int_sigmadot,'g--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
-plt.plot(t_vec_BOB, BOB_Int_sigmadot,'y--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
 
 
 #plt.xlim(ti, tf)
@@ -283,4 +283,34 @@ plt.ylabel(r'$\Psi$')
 plt.legend()
 plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision.pdf')
 plt.show()
+
+########## Compare Psi2 Plots beyond ISCO using resum waveform for both ########################################################
+# Resum Psi2 beyond ISCO
+t_vec_resum = t_vec_BOB
+r_resum_beyondISCO =r[idx_ini:idx_fin]
+p_r_resum_beyondISCO =p_r[idx_ini:idx_fin]
+phi_resum_beyondISCO =phi[idx_ini:idx_fin]
+p_phi_resum_beyondISCO =p_phi[idx_ini:idx_fin]
+
+
+Psi2_0_Growth_BOB_beyondISCO = Psi2_0_Growth_Pr(r_BOB, p_r_BOB, phi_BOB, p_phi_BOB, p)
+Psi2_0_Growth_resum_beyondISCO = Psi2_0_Growth_Pr(r_resum_beyondISCO, p_r_resum_beyondISCO, phi_resum_beyondISCO, p_phi_resum_beyondISCO, p)
+
+RR_Int_sigmadot = Psi2_sqr_fromWaveform(t_vec_resum , r_resum_beyondISCO, p_r_resum_beyondISCO, phi_resum_beyondISCO, p_phi_resum_beyondISCO, p)
+BOB_Int_sigmadot=Psi2_sqr_fromWaveform(t_vec_BOB , r_BOB, p_r_BOB, phi_BOB, p_phi_BOB, p)
+
+plt.plot( t_vec_BOB, Psi2_0_Growth_BOB_beyondISCO,'c', label = r'$\Psi = BOB \; rad \; force$')  
+plt.plot(t_vec_BOB, BOB_Int_sigmadot,'y--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
+plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k--', label = r'$\Psi = Resum \;RR$')
+plt.plot(t_vec_resum, RR_Int_sigmadot,'g--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
+
+
+#plt.xlim(ti, tf)
+#plt.ylim(-0.06, 0.01)
+plt.xlabel(r'$time$')
+plt.ylabel(r'$\Psi$')
+plt.legend()
+plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
+plt.show()
+
 
