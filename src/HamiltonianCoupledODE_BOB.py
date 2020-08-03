@@ -16,25 +16,25 @@ from scipy.special import gamma
 def Coupled_HamiltonianODEs_solver(initial_condition, domain, parameter_values):
 
     w0 = initial_condition
-    nu, ng_radial, t0, tp, tau, Ap, r_switch = parameter_values
+    nu, ng_radial, t0, tp, tau, Ap, r_switch, rad_reac = parameter_values
     t_vec = domain
 	
     abserr = 1.0e-8                         # error control parameters
     relerr = 1.0e-6
 
-    yvec = odeint(derivs, w0, t_vec, args = (nu, ng_radial, t0, tp, tau, Ap, r_switch), atol=abserr, rtol=relerr)
+    yvec = odeint(derivs, w0, t_vec, args = (nu, ng_radial, t0, tp, tau, Ap, r_switch, rad_reac), atol=abserr, rtol=relerr)
     return yvec
 
 
 'Derivatives'
 
-def derivs(w, t_vec, nu, ng_radial, t0, tp, tau, Ap, r_switch):
+def derivs(w, t_vec, nu, ng_radial, t0, tp, tau, Ap, r_switch, rad_reac):
 
     r, p_r, phi, p_phi = w
 
     dphi_bydt= dphi_by_dt(r, p_r, phi, p_phi, nu)
     dr_bydt= dr_by_dt(r, p_r, phi, p_phi, nu)
-    dp_phi_bydt= dp_phi_by_dt(r, p_r, phi, p_phi, nu, ng_radial, t0, tp, tau, Ap, r_switch)
+    dp_phi_bydt= dp_phi_by_dt(r, p_r, phi, p_phi, nu, ng_radial, t_vec, t0, tp, tau, Ap, r_switch, rad_reac)
     dp_r_bydt= dp_r_by_dt(r, p_r, phi, p_phi, nu)
 
     return dr_bydt, dp_r_bydt,  dphi_bydt, dp_phi_bydt
@@ -73,13 +73,17 @@ def dr_by_dt(r, p_r, phi, p_phi, nu):
     b=  p_r + z3*(2*A(r,nu)/r**2)*p_r**3
     return a*b
 
-def dp_phi_by_dt(r, p_r, phi, p_phi, nu, ng_radial, t0, tp, tau, Ap, r_switch):
+def dp_phi_by_dt(r, p_r, phi, p_phi, nu, ng_radial, t_vec, t0, tp, tau, Ap, r_switch, rad_reac):
     omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
     
     if r >= r_switch:
         forceRR = f_phi(r, p_r, phi, p_phi, nu)
     else:
-        forceRR = 0.0#*f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial, t0, tp, tau, Ap, r_switch)
+        if rad_reac==1:
+            forceRR = f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial, t_vec, t0, tp, tau, Ap, r_switch)
+        else:
+            forceRR = 0.0
+
     return forceRR
 
 def dp_r_by_dt(r, p_r, phi, p_phi, nu):
@@ -178,19 +182,38 @@ def time_vec(r0, rf, ng_orbit, ng_radial):
     t_vec_full = np.cumsum(dt_vec_full) 
     return t_vec_full, dt_vec_full 
 
+# Compute quasinormal frrequencies given initial spins and symmetric mass ratio
+def Omega_QNM(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
+    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
+    OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
+    return OM_QNM
+
+def Tau(t0, tp, OMqnm, OM0, OM0_dot, tau_min, tau_max):
+    tau = opt.brentq(lambda x: tp-t0-(x/2.0)*np.log((pow(OMqnm,4)-pow(OM0,4))/(2*x*pow(OM0,3)*OM0_dot)-1.0), tau_min, tau_max)
+    return tau
+
+def Omega_BOB(omega0, tau, t, t0, tp):
+    omqnm = Omega_QNM(0.0, 0.0, 0.25)
+    k = (pow(omqnm,4)-pow(omega0,4))/(1- np.tanh((t0-tp)/tau))
+    om = (pow(omega0,4) + k*(np.tanh((t-tp)/tau) - np.tanh((t0-tp)/tau) ))**(1.0/4)
+    return om
 
 #Radiation reaction force from BOB
-def f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial, t0, tp, tau, Ap, r_switch):  
-    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
-    omega = dphi_by_dt(r, p_r, phi, p_phi, nu)
+def f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial ,t_vec, t0, tp, tau, Ap, r_switch):  
+    omega0 = 0.068
+    omega = Omega_BOB(omega0, tau, t_vec, t0, tp)
 
-    #t=time_vec(r_switch, 3, 1500, 1000)[0]
+    abs_psi4=abs(Ap/np.cosh((t_vec-tp)/tau))
+    h22dot = abs_psi4/(2*omega)
 
-    #abs_psi4=Ap/np.cosh((t-tp)/tau)
-    #h22dot = abs_psi4*2*omega
-
-    #Fl = (2.0/(16*np.pi))*h22dot*h22dot
-    #F=-Fl/omega
-    #return F
+    Fl = (2.0/(16*np.pi))*h22dot*h22dot
+    F=-Fl/omega
+    
+    #print(F)
+    return F
 
 

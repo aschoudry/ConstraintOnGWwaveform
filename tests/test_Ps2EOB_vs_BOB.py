@@ -90,19 +90,35 @@ def Tau(t0, tp, OMqnm, OM0, OM0_dot, tau_min, tau_max):
     tau = opt.brentq(lambda x: tp-t0-(x/2.0)*np.log((pow(OMqnm,4)-pow(OM0,4))/(2*x*pow(OM0,3)*OM0_dot)-1.0), tau_min, tau_max)
     return tau
 
+# Ps2 from BOB
+def Omega_BOB(omega0, tau, t, t0, tp):
+    omqnm = Omega_QNM(0.0, 0.0, 0.25)
+    k = (pow(omqnm,4)-pow(omega0,4))/(1- np.tanh((t0-tp)/tau))
+    om = (pow(omega0,4) + k*(np.tanh((t-tp)/tau) - np.tanh((t0-tp)/tau) ))**(1.0/4)
+    return om
+    
+
+def Psi2_sqr_fromWaveform_BOB(omega0, tau, t, t0, tp):
+    omega = Omega_BOB(omega0, tau, t, t0, tp)
+    sigma_dd_sqr = 1.0/(np.cosh((t-tp)/tau))
+    sigma_dot_sqr = pow(sigma_dd_sqr,2)/pow(2*omega,2)
+    sigma_dot_sqr = sigma_dot_sqr - sigma_dot_sqr[0]
+    return -np.cumsum(sigma_dot_sqr)*0.3718/3000.0
+
+
 
 
 
 ##### Initial setup for binary very far to get rid of oscilation due to starting cirular orbit at close radai ########
-r_ini = 50.0                                                                    # Initial radius for circular orbit
-p=0.25; ng_radial =100; t0 = -10.0; tp =0.0; tau=1.0; Ap=1.0; r_switch=0        # Parameter nu, ng_radial, t0, tp, tau, Ap
-M=1                                                                             # Total mass
-w0 = r_ini, 0.0, 0, Circular_orbit_ini_P_phi(r_ini, p)                          # Input paramter of solving ODE
-r0 = 15                                                                         # Radius where quantities in balance law start being evaluated                    
+r_ini = 50.0                                                                                  # Initial radius for circular orbit
+p=0.25; ng_radial =100; t0 = -10.0; tp =0.0; tau=1.0; Ap=1.0; r_switch=0; rad_reac=0          # Parameter nu, ng_radial, t0, tp, tau, Ap
+M=1                                                                                           # Total mass
+w0 = r_ini, 0.0, 0, Circular_orbit_ini_P_phi(r_ini, p)                                        # Input paramter of solving ODE
+r0 = 15                                                                                       # Radius where quantities in balance law start being evaluated                    
 
 t_vec = time_vec(r_ini, r0, 1500, 100)[0]
 
-param_values = p, ng_radial, t0, tp, tau, Ap, r_switch
+param_values = p, ng_radial, t0, tp, tau, Ap, r_switch, rad_reac
 
 ## Solve ODEs to get intial condition at some close radai ###########################################################
 yvec = ODEs.Coupled_HamiltonianODEs_solver(w0, t_vec, param_values)
@@ -143,75 +159,55 @@ H_EOB = ODEs.Heob(r, p_r, phi, p_phi, p)
 ti = t_vec[find_nearest1(r,r0)]
 tf = t_vec[find_nearest1(r,3)]
 
-plt.plot(t_vec, Psi2_0_Growth(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B}$')
-plt.plot(t_vec, Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p), label = r'$\Psi = M_{B} + \frac{6}{2 \sqrt{2}}P_{r}$')
-plt.plot(t_vec, Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p), label = r'$\Psi = \int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2$')
+plt.plot(t_vec, Psi2_0_Growth(r, p_r, phi, p_phi, p), 'r',label = r'$\Psi = M_{B}$')
+plt.plot(t_vec + 28.37, Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p),'c', label = r'$\Psi = M_{B} + \frac{6}{2 \sqrt{2}}P_{r}$')  #Slight shifted the plots such that they peak at t=0
+plt.plot(t_vec, Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p),'k--', label = r'$\Psi = \int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2$')
 #plt.xlim(ti, tf)
 plt.ylim(-0.06, 0.01)
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
-#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_BOB.pdf')
+plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_BOB.pdf')
 plt.show()
 
+print(min(Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p)))
 ###################################################################################################################
 ################ How purterber trajactory looks without radiation reaction beyond ISCO ############################
 idx_isco = find_nearest1(r,6)
 r0_isco, p_r0_isco, phi0_isco, p_phi0_isco = r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco]
 w0_isco = r0_isco, p_r0_isco, phi0_isco, p_phi0_isco 
-p=0.25; ng_radial =100; t0 = -10.0; tp =0.0; tau=1.0; Ap=1.0; r_switch_isco=6 
+p=0.25; ng_radial =100; t0 = -10.0; tp =0.0; tau=1.0; Ap=1.0; r_switch_isco=6; rad_reac_isco=0
 
 t_vec_isco = time_vec(r0_isco, 3, 1500, 1000)[0]
-param_values_isco = p, ng_radial, t0, tp, tau, Ap, r_switch_isco
+param_values_isco = p, ng_radial, t0, tp, tau, Ap, r_switch_isco, rad_reac_isco
 
 yvec = ODEs.Coupled_HamiltonianODEs_solver(w0_isco, t_vec_isco, param_values_isco)
 
 r_isco, p_r_isco, phi_isco, p_phi_isco = yvec[:,0], yvec[:,1], yvec[:,2], yvec[:,3]
 
-
-
-
-
 #######################################################################################################
-
-
 
 ################ Start using BOB radiation flux from ISCO onwards ########################
 #For Swarzchild case ISCO at r = 6M
 
 idx_isco = find_nearest1(r,6)
 
-'''
 OM_ISCO = Omega[idx_isco]
 OM_qnm = Omega_QNM(0.0, 0.0, 0.25)
 OM_dot_ISCO = (Omega[idx_isco+1] - Omega[idx_isco])/(t_vec[idx_isco+1] - t_vec[idx_isco])
 
-# Damping time scale tau for BOB
-tau = Tau(t_vec[idx_isco], 0, OM_qnm , OM_ISCO, OM_dot_ISCO, 2, 50)
-
-### Start solving equation using BOB radiation reaction ##########
-p=0.25; ng_radial =100; t0 = t_vec[idx_isco]; tp =0.0; Ap=1.0; r_switch= 6.0  
-## Initial conditions ##
-r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB = r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco]
-w0_BOB = r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB 
-t_vec_BOB = time_vec(r0_BOB, 3, 1500, 1000)[0]
-
-#parameter values
-param_values = p, ng_radial, t0, tp, tau, Ap, r_switch
-yvec = ODEs.Coupled_HamiltonianODEs_solver(w0_BOB, t_vec_BOB, param_values)
-'''
-
+print('OM isco = ',OM_ISCO)
 
 plt.figure()
-plt.plot(r*np.cos(phi), r*np.sin(phi), label='$r_{0}=$'+str(r0))
+plt.plot(r*np.cos(phi), r*np.sin(phi), label='$r_{0}=$'+str(round(r0)))
 plt.plot(r[idx_isco:]*np.cos(phi[idx_isco:]), r[idx_isco:]*np.sin(phi[idx_isco:]), 'r')
-plt.plot(r_isco*np.cos(phi_isco), r_isco*np.sin(phi_isco), 'k--')
+plt.plot(r_isco*np.cos(phi_isco), r_isco*np.sin(phi_isco), 'k--', label='No RR beyond ISCO')
 plt.xlim(-1.5*r0, 1.5*r0)
 plt.ylim(-1.5*r0, 1.5*r0)
 plt.xlabel(r'$x$')
 plt.ylabel(r'$y$')
 plt.legend()
-#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB'+str(r0)+'.pdf')
+plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_rr'+str(round(r0))+'.pdf')
 plt.show()
 
 plt.figure()
@@ -225,4 +221,51 @@ plt.legend()
 #plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/h22EOB.pdf')
 plt.show()
 
+################### Make plot for r=6M to r=3M ###############################################
+idx_ini = find_nearest1(r,6)
+idx_fin = find_nearest1(r,3)
+vec = np.linspace(-35, 0, 100)
+
+plt.plot(t_vec[idx_ini:idx_fin], Psi2_0_Growth(r[idx_ini:idx_fin], p_r[idx_ini:idx_fin], phi[idx_ini:idx_fin], p_phi[idx_ini:idx_fin], p), label = r'$\Psi = M_{B}$')
+plt.plot(t_vec[idx_ini:idx_fin], Psi2_0_Growth_Pr(r[idx_ini:idx_fin], p_r[idx_ini:idx_fin], phi[idx_ini:idx_fin], p_phi[idx_ini:idx_fin], p), label = r'$\Psi = M_{B} + \frac{6}{2 \sqrt{2}}P_{r}$')
+plt.plot(t_vec[idx_ini:idx_fin], Psi2_sqr_fromWaveform(t_vec[idx_ini:idx_fin], r[idx_ini:idx_fin], p_r[idx_ini:idx_fin], phi[idx_ini:idx_fin], p_phi[idx_ini:idx_fin], p), label = r'$\Psi = \int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2$')
+#plt.plot(vec, Psi2_sqr_fromWaveform_BOB(0.066, 9.5, vec, -37.18, 0), 'k--' )
+
+
+#plt.xlim(ti, tf)
+
+plt.ylim(-0.06, 0.01)
+plt.xlabel(r'$time$')
+plt.ylabel(r'$\Psi$')
+plt.legend()
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_BOB.pdf')
+plt.show()
+
+# Damping time scale tau for BOB
+tau = Tau(t_vec[idx_isco], 0, OM_qnm , OM_ISCO, OM_dot_ISCO, 2, 50)
+
+### Start solving equation using BOB radiation reaction ##########
+p=0.25; ng_radial =1000; t0 = -50.0; tp =0.0; Ap=0.5; r_switch_isco=6; rad_reac_isco=1
+## Initial conditions ##
+r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB = r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco]
+w0_BOB = r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB 
+t_vec_BOB = t_vec[idx_isco:idx_fin]
+
+param_values = p, ng_radial, t0, tp, tau, Ap, r_switch_isco, rad_reac_isco
+yvec_BOB = ODEs.Coupled_HamiltonianODEs_solver(w0_BOB, t_vec_BOB, param_values)
+
+r_BOB, p_r_BOB, phi_BOB, p_phi_BOB = yvec_BOB[:,0], yvec_BOB[:,1], yvec_BOB[:,2], yvec_BOB[:,3]
+
+plt.figure()
+plt.plot(r*np.cos(phi), r*np.sin(phi), label='$r_{0}=$'+str(round(r0)))
+plt.plot(r[idx_isco:]*np.cos(phi[idx_isco:]), r[idx_isco:]*np.sin(phi[idx_isco:]), 'r', label='Resummer RR beyond ISCO')
+plt.plot(r_isco*np.cos(phi_isco), r_isco*np.sin(phi_isco), 'k--', label='No RR beyond ISCO')
+plt.plot(r_BOB*np.cos(phi_BOB), r_BOB*np.sin(phi_BOB), 'g--', label='BOB beyond ISCO')
+plt.xlim(-1.5*r0, 1.5*r0)
+plt.ylim(-1.5*r0, 1.5*r0)
+plt.xlabel(r'$x$')
+plt.ylabel(r'$y$')
+plt.legend()
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_rr'+str(round(r0))+'.pdf')
+plt.show()
 
