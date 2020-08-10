@@ -46,7 +46,9 @@ def Psi2p(r, nu, M):
 def Psi2_0_Growth(r, p_r, phi, p_phi, p):
     HEOB = ODEs.Heob(r, p_r, phi, p_phi, p)
     HEOB = HEOB-HEOB[0]
-    M = HEOB*p
+    HEFF = ODEs.Heff(r, p_r, phi, p_phi, p)
+    HEFF = HEFF - HEFF[0]
+    M = HEOB*p #+ p*HEFF
     M = M - M[0]
     return M
 
@@ -54,14 +56,16 @@ def Psi2_0_Growth(r, p_r, phi, p_phi, p):
 def Psi2_0_Growth_Pr(r, p_r, phi, p_phi, p):
     HEOB = ODEs.Heob(r, p_r, phi, p_phi, p)
     HEOB = HEOB-HEOB[0]
-    M = HEOB*p
+    HEFF = ODEs.Heff(r, p_r, phi, p_phi, p)
+    HEFF = HEFF - HEFF[0]
+    M = HEOB*p #+ p*HEFF
     M = M - M[0]
     Pr = (6.0/2/np.sqrt(2))*p_r*p
     Pr = Pr-Pr[0]
     a = ODEs.A(r, p)
     b = ODEs.B(r, p)
-    
-    return  M + np.sqrt(b/a)*Pr 
+
+    return M + np.sqrt(b/a)*Pr 
 
 # left hand side of the balance equation Intgral(Sigma_dot_sqr*dt)
 def Psi2_sqr_fromWaveform(t_vec, r, p_r, phi, p_phi, p):
@@ -90,20 +94,41 @@ def Tau(t0, tp, OMqnm, OM0, OM0_dot, tau_min, tau_max):
     tau = opt.brentq(lambda x: tp-t0-(x/2.0)*np.log((pow(OMqnm,4)-pow(OM0,4))/(2*x*pow(OM0,3)*OM0_dot)-1.0), tau_min, tau_max)
     return tau
 
+def Tau_v2(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
+    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
+    Q = 2.0*pow(1.0 - alpha, -0.45) 
+    tau = 2.0*Q*Mf/(1.0-0.63*pow(1.0-alpha, 0.3))
+    return tau
+def A_peak(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    ap = 1.068*pow(1-Mf, 0.8918)
+    return ap
+
 # Ps2 from BOB
 def Omega_BOB(omega0, tau, t, t0, tp):
     omqnm = Omega_QNM(0.0, 0.0, 0.25)
     k = (pow(omqnm,4)-pow(omega0,4))/(1- np.tanh((t0-tp)/tau))
     om = (pow(omega0,4) + k*(np.tanh((t-tp)/tau) - np.tanh((t0-tp)/tau) ))**(1.0/4)
     return om
-    
+  
+# BOB h22 amplitude
+def amp_h_BOB(omega0, tau, t, t0, tp):
+    OM = Omega_BOB(omega0, tau, t, t0, tp)
+    amp = Ap/(np.cosh((t-tp)/tau)*OM)
+    return amp
 
 def Psi2_sqr_fromWaveform_BOB(omega0, Ap, tau, t, t0, tp):
     omega = Omega_BOB(omega0, tau, t, t0, tp)
     sigma_dd_sqr = Ap/(np.cosh((t-tp)/tau))
     sigma_dot_sqr = pow(sigma_dd_sqr,2)/pow(2*omega,2)
     sigma_dot_sqr = sigma_dot_sqr - sigma_dot_sqr[0]
-    return -np.cumsum(sigma_dot_sqr)*(t[1]-t[0])
+    return -np.cumsum(abs(sigma_dot_sqr))*(t[2]-t[1])
 
 
 
@@ -167,7 +192,7 @@ plt.ylim(-0.06, 0.01)
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
-plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_BOB.pdf')
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_BOB.pdf')
 plt.show()
 
 ###################################################################################################################
@@ -206,7 +231,7 @@ plt.ylim(-1.5*r0, 1.5*r0)
 plt.xlabel(r'$x$')
 plt.ylabel(r'$y$')
 plt.legend()
-plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_rr'+str(round(r0))+'.pdf')
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_rr'+str(round(r0))+'.pdf')
 plt.show()
 
 plt.figure()
@@ -227,8 +252,12 @@ idx_fin = find_nearest1(r,3)
 # Damping time scale tau for BOB
 tau = Tau(t_vec[idx_isco], 0, OM_qnm , OM_ISCO, OM_dot_ISCO, 2, 50)
 
+
 ### Start solving equation using BOB radiation reaction ##########
-p=0.25; ng_radial =1000; t0 = -37.14466605358939; tp =0.0; Ap=4.0*pow(Omega_BOB(OM_ISCO, tau, tp, t0, tp),2); r_switch_isco=6; rad_reac_isco=1
+p=0.25; ng_radial =1000; t0 = t_vec[idx_isco]; tp =0.0; Ap=4.0*pow(Omega_BOB(OM_ISCO, tau, tp, t0, tp),2); r_switch_isco=6; rad_reac_isco=1
+
+Ap = A_peak(0.0, 0.0, p)
+tau = Tau_v2(0.0, 0.0, p)
 ## Initial conditions ##
 r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB = r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco]
 w0_BOB = r0_BOB, p_r0_BOB, phi0_BOB, p_phi0_BOB 
@@ -251,7 +280,7 @@ plt.ylim(-1.5*r0, 1.5*r0)
 plt.xlabel(r'$x$')
 plt.ylabel(r'$y$')
 plt.legend()
-plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_Vs_BOB_beyodISCO.pdf')
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/OrbitEOB_Vs_BOB_beyodISCO.pdf')
 plt.show()
 
 ########## Compare Psi2 Plots beyond ISCO ########################################################
@@ -271,9 +300,9 @@ BOB_Int_sigmadot=Psi2_sqr_fromWaveform_BOB(0.068, Ap, tau, t_vec_BOB, t0, tp)
 
 
 plt.plot( t_vec_BOB, Psi2_0_Growth_BOB_beyondISCO,'c', label = r'$\Psi = BOB \; rad \; force$')  
-plt.plot(t_vec_BOB, BOB_Int_sigmadot,'y--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
-plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k--', label = r'$\Psi = Resum \;RR$')
-plt.plot(t_vec_resum, RR_Int_sigmadot,'g--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
+plt.plot(t_vec_BOB, BOB_Int_sigmadot,'c--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
+plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k', label = r'$\Psi = Resum \;RR$')
+plt.plot(t_vec_resum, RR_Int_sigmadot,'k--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
 
 
 #plt.xlim(ti, tf)
@@ -283,6 +312,19 @@ plt.ylabel(r'$\Psi$')
 plt.legend()
 plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision.pdf')
 plt.show()
+
+plt.plot( t_vec_BOB, abs(Psi2_0_Growth_BOB_beyondISCO-BOB_Int_sigmadot),'c', label = r'$\Psi = BOB \; rad \; force$')  
+plt.plot(t_vec_resum, abs(Psi2_0_Growth_resum_beyondISCO-RR_Int_sigmadot),'k', label = r'$\Psi = Resum \;RR$')
+
+
+#plt.xlim(ti, tf)
+#plt.ylim(-0.06, 0.01)
+plt.xlabel(r'$time$')
+plt.ylabel(r'$\Psi$')
+plt.legend()
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision.pdf')
+plt.show()
+
 
 ########## Compare Psi2 Plots beyond ISCO using resum waveform for both ########################################################
 # Resum Psi2 beyond ISCO
@@ -300,9 +342,9 @@ RR_Int_sigmadot = Psi2_sqr_fromWaveform(t_vec_resum , r_resum_beyondISCO, p_r_re
 BOB_Int_sigmadot=Psi2_sqr_fromWaveform(t_vec_BOB , r_BOB, p_r_BOB, phi_BOB, p_phi_BOB, p)
 
 plt.plot( t_vec_BOB, Psi2_0_Growth_BOB_beyondISCO,'c', label = r'$\Psi = BOB \; rad \; force$')  
-plt.plot(t_vec_BOB, BOB_Int_sigmadot,'y--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
-plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k--', label = r'$\Psi = Resum \;RR$')
-plt.plot(t_vec_resum, RR_Int_sigmadot,'g--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
+plt.plot(t_vec_BOB, BOB_Int_sigmadot,'c--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;BOB$')
+plt.plot(t_vec_resum, Psi2_0_Growth_resum_beyondISCO,'k', label = r'$\Psi = Resum \;RR$')
+plt.plot(t_vec_resum, RR_Int_sigmadot,'k--', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}|^2 \;RR$')
 
 
 #plt.xlim(ti, tf)
@@ -311,6 +353,42 @@ plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
 plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
+plt.show()
+
+
+### Compare strain amplitde
+'''
+h4 = amp_h_BOB(OM_ISCO, tau, t_vec_BOB, t0, tp)/0.29
+h3 = ODEs.Rh22(r_BOB, p_r_BOB, phi_BOB, p_phi_BOB, p)
+
+h2 = h2/abs(h2[-1])
+h3 = h3/abs(h3[-1])
+
+plt.figure()
+plt.ylim(-1.0, 1.2)
+plt.xlim(-50, 10)
+plt.xlabel(r'$time$')
+plt.ylabel(r'$h_{22}$')
+plt.plot(t_vec-t_vec[-1], h2.real)
+plt.plot(t_vec_BOB, h3.real, 'k--')
+plt.plot(t_vec_BOB, h4, 'y')
+#plt.plot(t_vec[idx_isco:]-t_vec[-1], h2.real[idx_isco:], 'r')
+plt.legend()
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/h22EOB.pdf')
+plt.show()
+'''
+
+
+plt.plot( t_vec_BOB, abs(Psi2_0_Growth_BOB_beyondISCO-BOB_Int_sigmadot),'c', label = r'$\Psi = BOB \; rad \; force$')  
+plt.plot(t_vec_resum, abs(Psi2_0_Growth_resum_beyondISCO-RR_Int_sigmadot),'k', label = r'$\Psi = Resum \;RR$')
+
+
+#plt.xlim(ti, tf)
+#plt.ylim(-0.06, 0.01)
+plt.xlabel(r'$time$')
+plt.ylabel(r'$\Psi$')
+plt.legend()
+#plt.savefig('/home/aschoudhary/constraintongwwaveform/plots/Psi2EOBHamiltonia_Comparision.pdf')
 plt.show()
 
 

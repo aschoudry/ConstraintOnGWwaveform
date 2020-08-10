@@ -207,13 +207,12 @@ def f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial ,t_vec, t0, tp, tau, Ap, r_switc
     omega0 = 0.068
     omega = Omega_BOB(omega0, tau, t_vec, t0, tp)
 
+    #Ap = pow(Omega_BOB(omega0, tau, tp, t0, tp),2)
     abs_psi4=abs(Ap/np.cosh((t_vec-tp)/tau))
     h22dot = abs_psi4/(2*omega)
 
     Fl = (2.0/(16*np.pi))*h22dot*h22dot
     F=-Fl/omega
-    
-    #print(F)
     return F
 
 
