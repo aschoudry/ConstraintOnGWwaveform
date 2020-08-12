@@ -192,10 +192,6 @@ def Omega_QNM(alpha1, alpha2, nu):
     OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
     return OM_QNM
 
-def Tau(t0, tp, OMqnm, OM0, OM0_dot, tau_min, tau_max):
-    tau = opt.brentq(lambda x: tp-t0-(x/2.0)*np.log((pow(OMqnm,4)-pow(OM0,4))/(2*x*pow(OM0,3)*OM0_dot)-1.0), tau_min, tau_max)
-    return tau
-
 def Omega_BOB(omega0, tau, t, t0, tp):
     omqnm = Omega_QNM(0.0, 0.0, 0.25)
     k = (pow(omqnm,4)-pow(omega0,4))/(1- np.tanh((t0-tp)/tau))
@@ -207,12 +203,12 @@ def f_phi_BOB(r, p_r, phi, p_phi, nu, ng_radial ,t_vec, t0, tp, tau, Ap, r_switc
     omega0 = 0.068
     omega = Omega_BOB(omega0, tau, t_vec, t0, tp)
 
-    #Ap = pow(Omega_BOB(omega0, tau, tp, t0, tp),2)
     abs_psi4=abs(Ap/np.cosh((t_vec-tp)/tau))
     h22dot = abs_psi4/(2*omega)
 
     Fl = (2.0/(16*np.pi))*h22dot*h22dot
     F=-Fl/omega
     return F
+
 
 
