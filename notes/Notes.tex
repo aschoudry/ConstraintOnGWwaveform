@@ -74,7 +74,7 @@ Bondi identified the interior mass and three-momentum with the $l=0$ and $l=1$ h
 	M_{B} = \frac{-c^{2}}{2\sqrt{2}\,G}\Psi^{0}\\
 	P^{i} = -\frac{c^3}{6\,G}\Psi^i
 \end{align}
-where $M_{B}$, $P^{i}$ are the interior mass and angular momentum of the space time respectively. Also,
+where $M_{B}$, $P^{i}$ are the interior mass and linear momentum of the space time respectively. Also,
 \begin{align}
 	Y^{0}_{0} &= 1 \nonumber \\
 	Y^{0}_{1\,i} &= -c_i \nonumber \\
@@ -84,11 +84,11 @@ where $M_{B}$, $P^{i}$ are the interior mass and angular momentum of the space t
 \end{align}
 Using the above results, equation 1.4-1.7 at leading order we can relate mass and energy momentum of interior space time to $\psi_2$. 
 \begin{equation}
-	-2\,\sqrt{2}\,M_B -6 \vec{P}.\hat{r} + ... = \Re\left[\psi^{0}_{2} + \eth^{2}\bar{\sigma}^{o} + {\sigma}^{o}\dot{\bar{\sigma}}^{o} \right]
+	-2\,\sqrt{2}\,M_B -6 \sqrt{2}\vec{P}.\hat{r} + ... = \Re\left[\psi^{0}_{2} + \eth^{2}\bar{\sigma}^{o} + {\sigma}^{o}\dot{\bar{\sigma}}^{o} \right]
 \end{equation}
 Here we have just included only the mass and linear momentum terms, further terms includes angular momentum of interior space time (i.e. $J^k = -(\sqrt{2}c^3/12G)\Im(\psi^{0\,k}_{1})$). We can use the above result in the local balance law, to rewrite the local balance law. Substituting $\psi_2$ from equation 1.9 into equation 1.1 and as a first step just considering change in mass we have
 \begin{align}
-	 -\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi) =& -\left[\left(2\sqrt{2}M_B + \eth^{2}\bar{\sigma}^{o}\right)(u_1, \theta, \phi) - \left(2\sqrt{2}M_B + \eth^{2}\bar{\sigma}^{o}\right)(u_2, \theta, \phi)\right]\\ = & \int_{-\infty}^{t} du\, \left(2\sqrt{2}\,\dot{M}_B+ \eth^{2}\bar{\sigma}^{o} \right)\\ \implies -|\dot{\sigma^{o}}|^{2} + \Re\left( \eth^{2}\bar{\sigma}^{o}\right) = 2\sqrt{2}\,\dot{M}_B + \eth^{2}\bar{\sigma}^{o} \\ \implies  -|\dot{\sigma^{o}}|^{2}  = 2\sqrt{2}\,\dot{M}_B  
+	 -\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi) =& -\left[\left(2\sqrt{2}M_B + 6 \sqrt{2}\vec{P}.\hat{r}  + \eth^{2}\bar{\sigma}^{o}\right)(u_1, \theta, \phi) - \left(2\sqrt{2}M_B + 6 \sqrt{2}\vec{P}.\hat{r} + \eth^{2}\bar{\sigma}^{o}\right)(u_2, \theta, \phi)\right]\\ = & \int_{-\infty}^{t} du\, \left(2\sqrt{2}\,\dot{M}_B + 6 \sqrt{2}\dot{\vec{P}}.\hat{r} + \eth^{2}\bar{\sigma}^{o} \right)\\ \implies -|\dot{\sigma^{o}}|^{2} + \Re\left( \eth^{2}\bar{\sigma}^{o}\right) = 2\sqrt{2}\,\dot{M}_B + \eth^{2}\bar{\sigma}^{o} \\ \implies  -|\dot{\sigma^{o}}|^{2}  = 2\sqrt{2}\,\dot{M}_B  + 6 \sqrt{2}\dot{\vec{P}}.\hat{r} 
 \end{align}
 Here we have considered only the mass loss rate to the gravitational wave amplitude. Given the gravitational wave amplitude, above relation can be used to motivate the mass loss rate of interior space time and hence we get a insight for $\psi_2$, which appear in the local super-momentum balance law. 
 \section{ Weyl scalar $\Psi^{o}_{2}$ for BOB as perturber cross the light ring }
@@ -247,8 +247,8 @@ The local super-momentum balance law (\ref{superMomentumBalanceLaw}) can be rewr
 \begin{equation}
 	-\int_{u_{1}}^{u_{2}} du |\dot{\sigma^{o}}|^{2}(u, \theta, \phi) = \Psi = -2\sqrt{2}M_{B} - 6\sqrt{2}P_{r}
 \end{equation} 
-The above equation can be derived by making use of equation \ref{superMomentumBalanceLaw}-\ref{sphericalHarmonics}. The left hand side of the above equation is evaluated using EOB waveform($\dot{\sigma^{o}} = \left(\left(h_+ + i\;h_\times\right)/2\right)$). The right hand side is total mass and linear momentum of interior space-time. EOB formalism can be used compute these quantities. \\
-The total ADM mass of the interior space time consist of the mass of the central body and the mass of the orbiting body. The total ADM mass of the system changes as the particle inspirals. The ADM mass of the central body is equal to Hamiltonian given in equation \ref{Real Hamiltonian} ($M_{AMD} = H$).The real Hamiltonian is given by
+The left hand side of the above equation is evaluated using EOB waveform($\dot{\sigma^{o}} = \left(\left(h_+ + i\;h_\times\right)/2\right)$). The right hand side is total mass and linear momentum of interior space-time. EOB formalism can be used compute these quantities. \\
+The total Bondi mass of the interior space time consist of the mass of the central body and the mass of the orbiting body. The total mass of the system changes as the particle inspirals. The mass of the central body is equal to Hamiltonian given in equation \ref{Real Hamiltonian} ($M_{AMD} = H$).The real Hamiltonian is given by
     \begin{equation}
     	\hat{H}_{EOB}(r, p_{r_*}, \varphi) = \frac{H^{real}_{EOB}}{\mu} = \frac{1}{\nu}\sqrt{1 + 2\nu\left(\hat{H}_{\text{eff}}-1\right)}\nonumber
     \end{equation}
@@ -282,7 +282,12 @@ We can use resumed multipolar waveform expression for dominant $h_{22}$ mode giv
 \begin{align}
 	h_{lm}^{\left(\epsilon\right)} = \frac{GM\nu}{c^2 R}n_{lm}^{\epsilon}c_{l+\epsilon}\left(\nu\right)x^{\left(l+\epsilon\right)/2}Y^{l-\epsilon,-m}\bigg(\frac{\pi}{2}, \Phi\bigg)\hat{S}_{\text{eff}}^{\epsilon}T_{lm}e^{i\delta_{lm}}\rho_{lm}^l
 \end{align}
-The building blocks of this multipolar are given as a function of EOB Hamiltonian. For details see section II of \cite{Damour_2009}. We can numerically solve the above coupled ODEs for our system, where we set the smaller mass on initial circular orbit around the central body. The python which solves above equation is added to bitbucket ( constraintongwwaveform/script/supermomentumBlLawEOB.py)
+The building blocks of this multipolar waveform are given as a function of EOB Hamiltonian. For details see section II of \cite{Damour_2009}. We can numerically solve the above coupled ODEs for our system, where we set the smaller mass on initial circular orbit around the central body. The python code which solves above equation is added to bitbucket (\textcolor{blue}{constraintongwwaveform/script/supermomentumBlLawEOB.py}). Equation 3.15 has radiation reaction force, which is given in terms the waveform. For a comparison with BOB, we can use radiation reaction force using BOB waveform. Below is the description of code    
+\subsubsection{Description of python code}
+\begin{itemize}
+\item "supermomentumBlLawEOB.py" generate plots using equation (3.7). Upto the ISCO radius equation of motion uses radiation reaction force using EOB. Beyond ISCO code has option to either use EOB, BOB radiation reaction force or turn of radiation reaction force. The script is inside "\textcolor{blue}{/constraintongwwaveform/script/supermomentumBlLawEOB.py}"
+\item The equations of motion solved using this script are defined in "\textcolor{blue}{/constraintongwwaveform/src/HamiltonianCoupledODEBOB.py}" 
+\end{itemize}
 
 
 \begin{figure}
