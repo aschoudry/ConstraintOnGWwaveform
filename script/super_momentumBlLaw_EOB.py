@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '/home/aschoudhary/constraintongwwaveform/src')
+sys.path.insert(0, '../src')
 
 from scipy.integrate import odeint 
 import numpy as np 
