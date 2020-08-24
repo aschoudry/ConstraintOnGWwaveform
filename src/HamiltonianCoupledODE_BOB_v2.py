@@ -54,7 +54,7 @@ def B(r, nu):
     u=1.0/r
     a= 1-2*(u)+2*nu*(u**3)
     d= 1.0 + 6.0*nu*pow(u,2) + (52*nu-6.0*pow(nu,2))*pow(u,3)
-    return  d/a #1+2*u+2*(2-3*nu)*(u**2) 
+    return  d/a  
 
 def Heff(r, p_r, phi, p_phi, nu):
     z3 = 2*nu*(4-3*nu)

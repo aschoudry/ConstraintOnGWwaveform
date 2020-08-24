@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import PN_radiationReaction as PN_RR
 import scipy.optimize as opt
 
-# create a time vector with variable resolution so that time step are smaller are purterber inspirals in. 
+# create a time vector with variable resolution so that time step are smaller as purterber inspirals in. 
 def time_vec(r0, rf, ng_orbit, ng_radial):
     t_vec = np.array([])
     r_vec = np.linspace(r0, rf, ng_radial) 
@@ -39,25 +39,27 @@ def Circular_orbit_ini_P_phi(r, nu):
 # Psi due to back ground mass evolving (essentially Psi = M_ADM = H_Real)
 def Psi_Growth(r, p_r, phi, p_phi, p):
     HEOB = ODEs.Heob(r, p_r, phi, p_phi, p)
-    HEOB = HEOB-HEOB[0]
     HEFF = ODEs.Heff(r, p_r, phi, p_phi, p)
-    HEFF = HEFF - HEFF[0]
     M = HEOB*p + HEFF*p
-    return M
+    return -np.sqrt(2)*M
 
 # Psi due to back ground mass evolving (essentially Psi = M_ADM + Pr = H_Real + Pr), where Pr is the radial linenar momentum of purterber
 # Equation 1.9 in notes 
 def Psi_Growth_Pr(r, p_r, phi, p_phi, p):
     HEOB = ODEs.Heob(r, p_r, phi, p_phi, p)
-    HEOB = HEOB-HEOB[0]
     HEFF = ODEs.Heff(r, p_r, phi, p_phi, p)
-    HEFF = HEFF - HEFF[0]
     M = HEOB*p + HEFF*p
     Pr = p_r*p
-    Pr = Pr-Pr[0]
     a = ODEs.A(r, p)
     b = ODEs.B(r, p)
-    return M + (6.0/(2.0))*np.sqrt(b/a)*Pr 
+    return -np.sqrt(2)*M + -np.sqrt(2)*(6.0)*np.sqrt(b/a)*Pr 
+
+def Psi_Growth_Pr_BOB(r, p_r, phi, p_phi, p):
+    Pr = p_r*p
+    Pr = Pr
+    a = ODEs.A(r, p)
+    b = ODEs.B(r, p)
+    return (6.0/(2.0))*np.sqrt(b/a)*Pr 
 
 # left hand side of the balance equation Intgral(Sigma_dot_sqr*dt)
 def Intg_SigmaDot_sqr(t_vec, r, p_r, phi, p_phi, p):
@@ -66,7 +68,7 @@ def Intg_SigmaDot_sqr(t_vec, r, p_r, phi, p_phi, p):
     dt_vec = np.diff(t_vec)
     dt_vec = np.append(dt_vec, dt_vec[-1])
     Int_abs_Sigma_Dot_sqr = -np.cumsum(abs_Sigma_Dot_sqr*dt_vec)*abs(m2Y22(np.pi/2, np.pi/2.0))**2
-    Psi = Int_abs_Sigma_Dot_sqr - Int_abs_Sigma_Dot_sqr[0]
+    Psi = Int_abs_Sigma_Dot_sqr
     return Psi
 
 #### Functions that compute BOB waveform ###########################################################################################
@@ -77,7 +79,7 @@ def Omega_QNM(alpha1, alpha2, nu):
     Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
     ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
     alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
-    OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(1*Mf)
+    OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
     return OM_QNM
 
 def Tau_v2(alpha1, alpha2, nu):
@@ -89,6 +91,20 @@ def Tau_v2(alpha1, alpha2, nu):
     Q = 2.0*pow(1.0 - alpha, -0.45) 
     tau = 2.0*Q*Mf/(1.0-0.63*pow(1.0-alpha, 0.3))
     return tau
+
+def Final_Mass(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    return Mf
+
+def Final_Spin(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
+    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
+    return alpha
 
 def A_peak(A0,tau, t0, tp):
     Ap = A0*np.cosh((t0-tp)/tau)
@@ -122,12 +138,12 @@ def Intg_SigmaDot_sqr_BOB(t_vec, Abs_sigma_dot):
     dt_vec = np.diff(t_vec)
     dt_vec = np.append(dt_vec, dt_vec[-1])
     Int_sigma_dot_sqr = -np.cumsum(abs(sigma_dot_sqr)*dt_vec)
-    Int_sigma_dot_sqr = Int_sigma_dot_sqr - Int_sigma_dot_sqr[0]
+    Int_sigma_dot_sqr = Int_sigma_dot_sqr #- Int_sigma_dot_sqr[0]
     return Int_sigma_dot_sqr
 
 def Binding_Energy_BOB(t_vec, r, Mf, af, p):
     E = (p/pow(r, 3.0/4.0))*(pow(r, 3.0/2.0) - 2.0*Mf*pow(r, 1.0/2.0) + np.sqrt(Mf)*af)/np.sqrt(pow(r, 3.0/2.0) - 3.0*Mf*pow(r, 1.0/2.0) + 2*np.sqrt(Mf)*af) 
-    return E
+    return -np.sqrt(2)*E
 
 #######################################################################################################################
 ##### Initial setup for binary very far to get rid of oscilation due to starting cirular orbit at close radai ########
@@ -157,6 +173,7 @@ t_vec = t_vec-t_vec[-1]
 
 # Turn on radiation reaction from BOB at ISCO
 r_isco = 6.0; alpha1=0.0; alpha2=0.0; p=0.25; 
+
 idx_isco = find_nearest1(r,r_isco)
 omega = ODEs.dphi_by_dt(r, p_r, phi, p_phi, p)
 psi22_eob = abs(ODEs.Rh22(r, p_r, phi, p_phi, p))*4.0*omega*omega 
@@ -198,15 +215,15 @@ plt.plot(t_vec, ODEs.Rh22(r, p_r, phi, p_phi, p).real)
 plt.show()
 '''
 
-'''
+
 #flip arrays
 t_vec_BOB = np.flip(t_vec_BOB)
 r_BOB = np.flip(r_BOB)
 p_r_BOB = np.flip(p_r_BOB)
 phi_BOB = np.flip(phi_BOB)
 p_phi_BOB = np.flip(p_phi_BOB)
-
-PsiBOB_Pr = Psi_Growth_Pr(r_BOB, p_r_BOB, phi_BOB, p_phi_BOB, p)
+Mf = Final_Mass(alpha1, alpha2, p)
+af = Final_Spin(alpha1, alpha2, p)
 
 
 
@@ -220,13 +237,24 @@ phi_beyond_isco = np.flip(phi_beyond_isco)
 p_phi_beyond_isco = np.flip(p_phi_beyond_isco)
 
 
-PsiRRResum_Pr = Psi_Growth_Pr(r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
+PsiRRResum_Pr = Psi_Growth(r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
+PsiRRResum_Pr= PsiRRResum_Pr-PsiRRResum_Pr[0]
 
+#comoute psi BOB
+Abs_sigma_dot_BOB = Abs_sigma_dot_BOB(omega0, Ap, tau, t_vec_BOB, tp)
+PsiBOB_Pr =Binding_Energy_BOB(t_vec_BOB, r_BOB, Mf, af, p)
+PsiBOB_Pr = PsiBOB_Pr - PsiBOB_Pr[0]
+t_vec_BOB=t_vec_BOB-t_vec_BOB[0]
 
+Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr(t_vec_BOB, r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
+Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr_EOB - Intg_SigmaDot_sqr_EOB[0]
 
-plt.plot(t_vec_BOB, Intg_SigmaDot_sqr(t_vec_BOB, r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p),'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2$')
+Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB(t_vec_BOB, Abs_sigma_dot_BOB)
+Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB - Intg_SigmaDot_sqr_BOB[0]
+
+plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_EOB,'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2$')
 plt.plot(t_vec_BOB, PsiRRResum_Pr,'r--', label = r'$\Psi = -M_{RRsum}$')
-plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_BOB(Ap, tau, t_vec_BOB, t0, tp),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2$')
+plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_BOB,'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2$')
 plt.plot(t_vec_BOB, PsiBOB_Pr,'c--', label = r'$\Psi = -M_{BOB}$')
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
@@ -234,14 +262,11 @@ plt.legend()
 #plt.savefig('../plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
 plt.show()
 
-plt.semilogy(t_vec_BOB, -Intg_SigmaDot_sqr(t_vec_BOB, r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p),'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2$')
-plt.semilogy(t_vec_BOB, -PsiRRResum_Pr,'r--', label = r'$\Psi = -M_{RRsum}$')
-plt.semilogy(t_vec_BOB, -Intg_SigmaDot_sqr_BOB(Ap, tau, t_vec_BOB, t0, tp),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2$')
-plt.semilogy(t_vec_BOB, -PsiBOB_Pr,'c--', label = r'$\Psi = -M_{BOB}$')
+plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_EOB-PsiRRResum_Pr),'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2 - M_{RRsum}$')
+plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_BOB-PsiBOB_Pr),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2 - M_{BOB}$')
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
+#plt.savefig('../plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
 plt.show()
 
-print(tau)
-'''
