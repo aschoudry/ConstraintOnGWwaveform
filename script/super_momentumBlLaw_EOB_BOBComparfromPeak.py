@@ -142,8 +142,10 @@ def Intg_SigmaDot_sqr_BOB(t_vec, Abs_sigma_dot):
     return Int_sigma_dot_sqr
 
 def Binding_Energy_BOB(t_vec, r, Mf, af, p):
-    E = (p/pow(r, 3.0/4.0))*(pow(r, 3.0/2.0) - 2.0*Mf*pow(r, 1.0/2.0) + np.sqrt(Mf)*af)/np.sqrt(pow(r, 3.0/2.0) - 3.0*Mf*pow(r, 1.0/2.0) + 2*np.sqrt(Mf)*af) 
+    E = (p/pow(r, 3.0/4.0))*(pow(r, 3.0/2.0) - 2.0*Mf*pow(r, 1.0/2.0) + pow(Mf, 1.0/2.0)*af)/np.sqrt(pow(r, 3.0/2.0) - 3.0*Mf*pow(r, 1.0/2.0) + 2*pow(Mf, 1.0/2.0)*af) 
     return -np.sqrt(2)*E
+
+#def ISCO_radius()
 
 #######################################################################################################################
 ##### Initial setup for binary very far to get rid of oscilation due to starting cirular orbit at close radai ########
@@ -151,9 +153,9 @@ r_ini = 50.0                                                                    
 p=0.25; ng_radial =1000; t0 = -50.0; tp =0.0; tau=1.0; Ap=1.0; r_switch=0; rad_reac=0;           # Parameter nu, ng_radial, t0, tp, tau, Ap
 M=1; omega0=0                                                                                             # Total mass 
 w0 = r_ini, 0.0, 0, Circular_orbit_ini_P_phi(r_ini, p)                                          # Input paramter of solving ODE: w0 = r0, p_r0, phi0, p_phi0 
-rf = 3                                                                                          # Radius where quantities in balance law start being evaluated                    
+rf = 2                                                                                          # Radius where quantities in balance law start being evaluated                    
 
-t_vec = time_vec(r_ini, rf, 2000, 1000)[0]                                                      # Create time vector with variable rosultion 
+t_vec = time_vec(r_ini, rf, 3000, 1000)[0]                                                      # Create time vector with variable rosultion 
 
 param_values =  p, t0, tp, tau, Ap, r_switch, rad_reac, omega0
 
@@ -165,7 +167,7 @@ r, p_r, phi, p_phi = yvec[:,0], yvec[:,1], yvec[:,2], yvec[:,3]
 
 #####################################################################################################################
 ##### Make plots for r0=15 to rf=3M #################################################################################
-r0=15; rf=3
+r0=15; rf=2.01
 idx_r0 = find_nearest1(r,r0)
 idx_rf = find_nearest1(r,rf)
 t_vec = t_vec[idx_r0:idx_rf]; r = r[idx_r0:idx_rf]; p_r = p_r[idx_r0:idx_rf]; phi = phi[idx_r0:idx_rf]; p_phi = p_phi[idx_r0:idx_rf]
@@ -178,11 +180,10 @@ idx_isco = find_nearest1(r,r_isco)
 omega = ODEs.dphi_by_dt(r, p_r, phi, p_phi, p)
 psi22_eob = abs(ODEs.Rh22(r, p_r, phi, p_phi, p))*4.0*omega*omega 
 
-tau= Tau_v2(alpha1, alpha2, p); t0 = t_vec[idx_isco]; A0=psi22_eob[idx_isco]
+tau = Tau_v2(alpha1, alpha2, p); t0 = t_vec[idx_isco]; A0=psi22_eob[idx_isco]
 omega0 = omega[idx_isco]; omqnm = Omega_QNM(alpha1, alpha2, p)
 
-omega0_dot = (ODEs.dphi_by_dt(r[idx_isco+1], p_r[idx_isco+1], phi[idx_isco+1], p_phi[idx_isco+1], p)\
-        -ODEs.dphi_by_dt(r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco], p))/(t_vec[idx_isco+1]- t_vec[idx_isco])
+omega0_dot = (omega[idx_isco+1] - omega[idx_isco])/(t_vec[idx_isco+1]- t_vec[idx_isco])
 
 tp = Tp(t0, tau, omega0, omqnm, omega0_dot); Ap=A_peak(A0,tau, t0, tp)
 r_switch=r_isco; rad_reac=1
@@ -225,8 +226,6 @@ p_phi_BOB = np.flip(p_phi_BOB)
 Mf = Final_Mass(alpha1, alpha2, p)
 af = Final_Spin(alpha1, alpha2, p)
 
-
-
 # Plot integral Balance law
 r_beyond_isco =r[idx_isco:]; p_r_beyond_isco = p_r[idx_isco:]; phi_beyond_isco=phi[idx_isco:]; p_phi_beyond_isco=p_phi[idx_isco:]
 #flip arrays
@@ -246,16 +245,19 @@ PsiBOB_Pr =Binding_Energy_BOB(t_vec_BOB, r_BOB, Mf, af, p)
 PsiBOB_Pr = PsiBOB_Pr - PsiBOB_Pr[0]
 t_vec_BOB=t_vec_BOB-t_vec_BOB[0]
 
+omega_bob =  Omega_BOB(omega0, tau, t_vec_BOB, t0, tp)
+omega_bob = omega_bob - omega_bob[0]
+
 Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr(t_vec_BOB, r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
 Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr_EOB - Intg_SigmaDot_sqr_EOB[0]
 
-Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB(t_vec_BOB, Abs_sigma_dot_BOB)
+Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB(t_vec_BOB, Abs_sigma_dot_BOB) 
 Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB - Intg_SigmaDot_sqr_BOB[0]
 
 plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_EOB,'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2$')
 plt.plot(t_vec_BOB, PsiRRResum_Pr,'r--', label = r'$\Psi = -M_{RRsum}$')
 plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_BOB,'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2$')
-plt.plot(t_vec_BOB, PsiBOB_Pr,'c--', label = r'$\Psi = -M_{BOB}$')
+plt.plot(t_vec_BOB, PsiBOB_Pr-omega_bob ,'c--', label = r'$\Psi = -M_{BOB}$')
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
@@ -263,10 +265,18 @@ plt.legend()
 plt.show()
 
 plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_EOB-PsiRRResum_Pr),'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2 - M_{RRsum}$')
-plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_BOB-PsiBOB_Pr),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2 - M_{BOB}$')
+plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_BOB-PsiBOB_Pr+omega_bob),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2 - M_{BOB}$')
 plt.xlabel(r'$time$')
 plt.ylabel(r'$\Psi$')
 plt.legend()
 #plt.savefig('../plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
 plt.show()
 
+
+####################################################################################################
+###### Using first principle approach for final Mass and Spin #####################################
+print('Mf=',Mf)
+H_isco = ODEs.Heff(r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco], p)
+Mf = (1+ p - p*H_isco)
+
+print('Mf=',Mf)
