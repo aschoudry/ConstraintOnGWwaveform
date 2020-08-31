@@ -2,13 +2,9 @@ import sys
 sys.path.insert(0, '../src')
 
 from scipy.integrate import odeint 
-import numpy as np 
-from numpy.core.umath_tests import inner1d
 import numpy as np
-import HamiltonianCoupledODE_BOB_v2 as ODEs
+import HamiltonianCoupledODE_EOB3PN as ODEs
 import matplotlib.pyplot as plt
-import PN_radiationReaction as PN_RR
-import scipy.optimize as opt
 
 # create a time vector with variable resolution so that time step are smaller as purterber inspirals in. 
 def time_vec(r0, rf, ng_orbit, ng_radial):
@@ -34,14 +30,14 @@ def m2Y22(Theta, Phi):
 
 # Initial orbital momentum p_phi for a initial circular orbit  
 def Circular_orbit_ini_P_phi(r, nu):
-    return np.sqrt(ODEs.Ap(r, nu)*(r**2)/(2*ODEs.A(r, nu)/r - ODEs.Ap(r, nu)))
+    return np.sqrt(pow(r,3)*ODEs.Ap(r,nu)/2.0)
 
 # Psi due to back ground mass evolving (essentially Psi = M_ADM = H_Real)
 def Psi_Growth(r, p_r, phi, p_phi, p):
     HEOB = ODEs.Heob(r, p_r, phi, p_phi, p)
     HEFF = ODEs.Heff(r, p_r, phi, p_phi, p)
     M = HEOB*p + HEFF*p
-    return -np.sqrt(2)*M*2
+    return -np.sqrt(2)*M
 
 # Psi due to back ground mass evolving (essentially Psi = M_ADM + Pr = H_Real + Pr), where Pr is the radial linenar momentum of purterber
 # Equation 1.9 in notes 
@@ -52,7 +48,7 @@ def Psi_Growth_Pr(r, p_r, phi, p_phi, p):
     Pr = p_r*p
     a = ODEs.A(r, p)
     b = ODEs.B(r, p)
-    return (-np.sqrt(2)*M*2.0 + -np.sqrt(2)*(6.0)*np.sqrt(b/a)*Pr) 
+    return -np.sqrt(2)*M + -np.sqrt(2)*(6.0)*np.sqrt(b/a)*Pr 
 
 def Psi_Growth_Pr_BOB(r, p_r, phi, p_phi, p):
     Pr = p_r*p
@@ -148,15 +144,15 @@ def Binding_Energy_BOB(t_vec, r, Mf, af, p):
 
 #######################################################################################################################
 ##### Initial setup for binary very far to get rid of oscilation due to starting cirular orbit at close radai ########
-r_ini = 50.0                                                                                    # Initial radius for circular orbit
-p=0.25; ng_radial =1000; t0 = -50.0; tp =0.0; tau=1.0; Ap=1.0; r_switch=0; rad_reac=0;           # Parameter nu, ng_radial, t0, tp, tau, Ap
-M=1; omega0=0                                                                                             # Total mass 
+r_ini = 16.0                                                                                    # Initial radius for circular orbit
+p=0.25; ng_radial =100                                                                         # Parameter nu, ng_radial, t0, tp, tau, Ap
+M=1                                                                                             # Total mass 
 w0 = r_ini, 0.0, 0, Circular_orbit_ini_P_phi(r_ini, p)                                          # Input paramter of solving ODE: w0 = r0, p_r0, phi0, p_phi0 
 rf = 2                                                                                          # Radius where quantities in balance law start being evaluated                    
 
-t_vec = time_vec(r_ini, rf, 5000, 2000)[0]                                                      # Create time vector with variable rosultion 
+t_vec = time_vec(r_ini, rf, 100, 2000)[0]                                                      # Create time vector with variable rosultion 
 
-param_values =  p, t0, tp, tau, Ap, r_switch, rad_reac, omega0
+param_values =  p
 
 ## Solve ODEs to get intial condition at some close radai ###########################################################
 yvec = ODEs.Coupled_HamiltonianODEs_solver(w0, t_vec, param_values)
@@ -169,17 +165,16 @@ r, p_r, phi, p_phi = yvec[:,0], yvec[:,1], yvec[:,2], yvec[:,3]
 r0=15; rf=2.01
 idx_r0 = find_nearest1(r,r0)
 idx_rf = find_nearest1(r,rf)
-t_vec = t_vec[idx_r0:idx_rf]; r = r[idx_r0:idx_rf]; p_r = p_r[idx_r0:idx_rf]; phi = phi[idx_r0:idx_rf]; p_phi = p_phi[idx_r0:idx_rf]
-t_vec = t_vec-t_vec[-1]
+#t_vec = t_vec[idx_r0:idx_rf]; r = r[idx_r0:idx_rf]; p_r = p_r[idx_r0:idx_rf]; phi = phi[idx_r0:idx_rf]; p_phi = p_phi[idx_r0:idx_rf]
+#t_vec = t_vec-t_vec[-1]
 
 # Turn on radiation reaction from BOB at ISCO
-r_isco = 3.4; alpha1=0.0; alpha2=0.0; p=0.25; 
+r_isco = 6.0; alpha1=0.0; alpha2=0.0; p=0.25; 
 
 idx_isco = find_nearest1(r,r_isco)
 omega = ODEs.dphi_by_dt(r, p_r, phi, p_phi, p)
-psi22_eob = abs(ODEs.Rh22(r, p_r, phi, p_phi, p))*4.0*omega*omega 
 
-tau = Tau_v2(alpha1, alpha2, p); t0 = t_vec[idx_isco]; A0=psi22_eob[idx_isco]
+tau = Tau_v2(alpha1, alpha2, p); t0 = t_vec[idx_isco]; A0=0.1
 omega0 = omega[idx_isco]; omqnm = Omega_QNM(alpha1, alpha2, p)
 
 omega0_dot = (omega[idx_isco+1] - omega[idx_isco])/(t_vec[idx_isco+1]- t_vec[idx_isco])
@@ -188,8 +183,7 @@ tp = Tp(t0, tau, omega0, omqnm, omega0_dot); Ap=A_peak(A0,tau, t0, tp)
 r_switch=r_isco; rad_reac=0
 t_vec_BOB=t_vec[idx_isco:]
 
-param_values_BOB = p, t0, tp, tau, Ap, r_switch, rad_reac, omega0
-
+param_values_BOB = p
 # start solving equations of motion at ISCO using BOB radiation reaction force
 
 w_isco = r_isco, p_r[idx_isco], phi[idx_isco], p_phi[idx_isco]
@@ -198,84 +192,6 @@ r_BOB, p_r_BOB, phi_BOB, p_phi_BOB = yvec_BOB[:,0], yvec_BOB[:,1], yvec_BOB[:,2]
 
 # Plot particle trajactory 
 plt.plot(r*np.cos(phi), r*np.sin(phi))
-plt.plot(r_BOB*np.cos(phi_BOB), r_BOB*np.sin(phi_BOB), 'r--')
-plt.show()
-
-# Plot h22 apmlitude
-Amp_BOB = Amplitude_h_BOB(omega0, Ap, tau, t_vec_BOB, tp)
-plt.plot(t_vec_BOB, Amp_BOB, 'r--')
-plt.plot(t_vec,abs(ODEs.Rh22(r, p_r, phi, p_phi, p)))
-plt.show()
-
-'''
-#Make plots to compare h22 mode for EOB and BOB
-h22_BOB = Amplitude_h_BOB(omega0, Ap, tau, t_vec_BOB, tp)*np.cos(2.0*Omega_BOB(omega0, tau, t_vec_BOB, t0, tp))
-plt.plot(t_vec_BOB, h22_BOB, 'r--')
-plt.plot(t_vec, ODEs.Rh22(r, p_r, phi, p_phi, p).real)
-plt.show()
-'''
-
-
-#flip arrays
-t_vec_BOB = np.flip(t_vec_BOB)
-r_BOB = np.flip(r_BOB)
-p_r_BOB = np.flip(p_r_BOB)
-phi_BOB = np.flip(phi_BOB)
-p_phi_BOB = np.flip(p_phi_BOB)
-Mf = Final_Mass(alpha1, alpha2, p)
-af = Final_Spin(alpha1, alpha2, p)
-
-# Plot integral Balance law
-r_beyond_isco =r[idx_isco:]; p_r_beyond_isco = p_r[idx_isco:]; phi_beyond_isco=phi[idx_isco:]; p_phi_beyond_isco=p_phi[idx_isco:]
-#flip arrays
-t_vec_BOB = np.flip(t_vec_BOB)
-r_beyond_isco = np.flip(r_beyond_isco)
-p_r_beyond_isco = np.flip(p_r_beyond_isco)
-phi_beyond_isco = np.flip(phi_beyond_isco)
-p_phi_beyond_isco = np.flip(p_phi_beyond_isco)
-
-
-PsiRRResum_Pr = Psi_Growth(r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
-PsiRRResum_Pr= PsiRRResum_Pr-PsiRRResum_Pr[0]
-
-#comoute psi BOB
-Abs_sigma_dot_BOB = Abs_sigma_dot_BOB(omega0, Ap, tau, t_vec_BOB, tp)
-PsiBOB_Pr =Binding_Energy_BOB(t_vec_BOB, r_BOB, Mf, af, p)
-PsiBOB_Pr = PsiBOB_Pr - PsiBOB_Pr[0]
-t_vec_BOB=t_vec_BOB-t_vec_BOB[0]
-
-omega_bob =  Omega_BOB(omega0, tau, t_vec_BOB, t0, tp)
-omega_bob = omega_bob - omega_bob[0]
-
-Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr(t_vec_BOB, r_beyond_isco, p_r_beyond_isco, phi_beyond_isco, p_phi_beyond_isco, p)
-Intg_SigmaDot_sqr_EOB = Intg_SigmaDot_sqr_EOB - Intg_SigmaDot_sqr_EOB[0]
-
-Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB(t_vec_BOB, Abs_sigma_dot_BOB) 
-Intg_SigmaDot_sqr_BOB = Intg_SigmaDot_sqr_BOB - Intg_SigmaDot_sqr_BOB[0]
-
-plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_EOB,'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2$')
-plt.plot(t_vec_BOB, PsiRRResum_Pr,'r--', label = r'$\Psi = -M_{RRsum}$')
-plt.plot(t_vec_BOB, Intg_SigmaDot_sqr_BOB,'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2$')
-plt.plot(t_vec_BOB, -np.sqrt(2)*omega_bob ,'c--', label = r'$\Psi = -M_{BOB}$')
-plt.xlabel(r'$time$')
-plt.ylabel(r'$\Psi$')
-plt.legend()
-#plt.savefig('../plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
-plt.show()
-
-plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_EOB-PsiRRResum_Pr),'r', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{Rsum}|^2 - M_{RRsum}$')
-plt.plot(t_vec_BOB, abs(Intg_SigmaDot_sqr_BOB+np.sqrt(2)*omega_bob),'c', label = r'$\Psi = -\int_{u_1}^{u_2}du|\dot{\sigma^{0}}_{BOB}|^2 - M_{BOB}$')
-plt.xlabel(r'$time$')
-plt.ylabel(r'$\Psi$')
-plt.legend()
-#plt.savefig('../plots/Psi2EOBHamiltonia_Comparision_usingResumModel.pdf')
 plt.show()
 
 
-####################################################################################################
-###### Using first principle approach for final Mass and Spin #####################################
-print('Mf=',Mf)
-H_isco = ODEs.Heff(r[idx_isco], p_r[idx_isco], phi[idx_isco], p_phi[idx_isco], p)
-Mf = (1+ p - p*H_isco)
-
-print('Mf=',Mf)
