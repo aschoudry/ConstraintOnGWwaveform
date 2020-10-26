@@ -73,77 +73,69 @@ def Intg_SigmaDot_sqr(t_vec, r, p_r, phi, p_phi, p):
 
 #### Functions that compute BOB waveform ###########################################################################################
 # Compute quasinormal frrequencies given initial spins and symmetric mass ratio
-def Omega_QNM(alpha1, alpha2, nu):
-    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
-    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
-    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
-    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
-    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
-    OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
-    return OM_QNM
+def OMEGA_p_pow4(OM0, OM0_dot, OMQNM, tau):
+    OMQNMp4 = OMQNM**4; OM0p4 = OM0**4; OM0p3 = OM0**3
+    tanh_arg = -np.log(((OMQNMp4 - OM0p4)/(2.0*tau* OM0p3 *OM0_dot))-1.0)/2.0
+    OM_p_pow4 = (OM0p4-OMQNMp4*np.tanh(tanh_arg))/(1.0-np.tanh(tanh_arg))
+    return OM_p_pow4
 
-def Final_Mass(alpha1, alpha2, nu):
-    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
-    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
-    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
-    return Mf
+def OMEGA_m_pow4(OM0, OM0_dot, OMQNM, tau):
+    OMQNMp4 = OMQNM**4; OM0p4 = OM0**4; OM0p3 = OM0**3
+    tanh_arg = -np.log(((OMQNMp4 - OM0p4)/(2.0*tau* OM0p3 *OM0_dot))-1.0)/2.0
+    OM_m_pow4 = (OMQNMp4-OM0p4)/(1.0-np.tanh(tanh_arg))
+    return OM_m_pow4
 
-def Final_Spin(alpha1, alpha2, nu):
-    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
-    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
-    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
-    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
-    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
-    return alpha
+def kapp(OM0, OM0_dot, OMQNM, tau):
+    OMQNMp4 = OMQNM**4; OM0p4 = OM0**4; OM0p3 = OM0**3
+    tanh_arg = -np.log(((OMQNMp4 - OM0p4)/(2.0*tau*OM0p3*OM0_dot))-1.0)/2.0
+    OM_m_pow4 = (OMQNMp4-OM0p4)/(1.0-np.tanh(tanh_arg))
+    kp_p = (OM0**4 + OM_m_pow4*(1.0 - np.tanh(tanh_arg)))**0.25
+    kp_m = (OM0**4 - OM_m_pow4*(1.0 + np.tanh(tanh_arg)))**0.25
+    return kp_p, kp_m
 
+def t_ph(tp, OM0, OM0_dot, OMQNM, tau):
+    OM_p_pow4 = OMEGA_p_pow4(OM0, OM0_dot, OMQNM, tau)
+    OM_m_pow4 = OMEGA_m_pow4(OM0, OM0_dot, OMQNM, tau)
+    tph = tp + (tau/2.0)*np.arctanh((OM_p_pow4/OM_m_pow4)-np.sqrt((OM_p_pow4/OM_m_pow4)**2-1.0))
+    return tph
 
-def Tau_v2(alpha1, alpha2, nu):
-    Mf = Final_Mass(alpha1, alpha2, nu)
-    alpha = Final_Spin(alpha1, alpha2, nu)
-    Q = 2.0*pow(1.0 - alpha, -0.45) 
-    tau = 2.0*Q*Mf/(1.0-0.63*pow(1.0-alpha, 0.3))
-    return tau
-
-
-def A_peak(A0,tau, t0, tp):
-    Ap = A0*np.cosh((t0-tp)/tau)
-    return Ap
-
-# Ps2 from BOB
-def Omega_BOB(omega0, tau, t, t0, tp):
-    omqnm = Omega_QNM(0.0, 0.0, 0.25)
-    k = (pow(omqnm,4)-pow(omega0,4))/(1- np.tanh((t0-tp)/tau))
-    om = (pow(omega0,4) + k*(np.tanh((t-tp)/tau) - np.tanh((t0-tp)/tau)))**(1.0/4)
-    return om
-
-def Tp(t0, tau, omega0, omqnm, omega0_dot):
-    tp = t0 + (tau/2.0)*np.log(((pow(omqnm,4)-pow(omega0,4))/(2.0*tau*pow(omega0,3)*omega0_dot))-1.0)
+def t_peak(t0, OM0, OM0_dot, OMQNM, tau):
+    OMQNMp4 = OMQNM**4; OM0p4 = OM0**4; OM0p3 = OM0**3
+    tanh_arg = -np.log(((OMQNMp4 - OM0p4)/(2.0*tau* OM0p3 *OM0_dot))-1.0)/2.0
+    tp = t0 - tau*tanh_arg
     return tp
 
-def Amplitude_h_BOB(omega0, Ap, tau, t, tp):
-    Amp_psi4 = Ap/(np.cosh((t-tp)/tau))
-    om_bob = Omega_BOB(omega0, tau, t, t0, tp)
-    Amp_h = Amp_psi4/(4.0*om_bob*om_bob)
-    return Amp_h
+def Omega_BOB(t, tp, OM0, OM0_dot, OMQNM, tau):
+    OM_p_pow4 = OMEGA_p_pow4(OM0, OM0_dot, OMQNM, tau)
+    OM_m_pow4 = OMEGA_m_pow4(OM0, OM0_dot, OMQNM, tau)
+    OM = (OM_p_pow4 + OM_m_pow4*np.tanh((t-tp)/tau))**0.25
+    return OM
 
-def Abs_sigma_dot_BOB(omega0, Ap, tau, t, tp):
-    Amp_psi4 = Ap/(np.cosh((t-tp)/tau))
-    om_bob = Omega_BOB(omega0, tau, t, t0, tp)
-    Abs_sigma_dot = Amp_psi4/(2.0*om_bob)*m2Y22(np.pi/2, np.pi/2.0)
-    return Abs_sigma_dot
+def Phi_BOB(t, tp, OM0, OM0_dot, OMQNM, tau):
+    OM_BOB = Omega_BOB(t, tp, OM0, OM0_dot, OMQNM, tau)
+    kp = kapp(OM0, OM0_dot, OMQNM, tau)[0]
+    km = kapp(OM0, OM0_dot, OMQNM, tau)[1]
+    arctan_p = kp*tau*(np.arctan2(OM_BOB,kp)-np.arctan2(OM0,kp))
+    arctan_m = km*tau*(np.arctan2(OM_BOB,km)-np.arctan2(OM0,km))
+    arctanh_p = kp*tau*(np.arctanh(OM_BOB/kp)-np.arctanh(OM0/kp))
+    arctanh_m = km*tau*0.5*np.log( (OM_BOB/km + 1)*(1 - OM0/km)/(1 - OM_BOB/km)/(1 + OM0/km))
+    return arctan_p + arctanh_p - arctan_m - arctanh_m
 
-def Intg_SigmaDot_sqr_BOB(t_vec, Abs_sigma_dot):
-    sigma_dot_sqr = Abs_sigma_dot*Abs_sigma_dot
-    dt_vec = np.diff(t_vec)
-    dt_vec = np.append(dt_vec, dt_vec[-1])
-    Int_sigma_dot_sqr = -np.cumsum(abs(sigma_dot_sqr)*dt_vec)
-    Int_sigma_dot_sqr = Int_sigma_dot_sqr #- Int_sigma_dot_sqr[0]
-    return Int_sigma_dot_sqr
+def A_peak(A0, t0, tp, tau):
+    return A0*np.cosh((t0-tp)/tau)
 
-def Binding_Energy_BOB(t_vec, r, Mf, af, p):
-    E = (p/pow(r, 3.0/4.0))*(pow(r, 3.0/2.0) - 2.0*Mf*pow(r, 1.0/2.0) + pow(Mf, 1.0/2.0)*af)/np.sqrt(pow(r, 3.0/2.0) - 3.0*Mf*pow(r, 1.0/2.0) + 2*pow(Mf, 1.0/2.0)*af) 
-    return -np.sqrt(2)*E
+def Psi4_BOB_amp(t, Ap, tau, tp):
+    return Ap/np.cosh((t-tp)/tau)
 
+def h_amp_BOB(t, tp, Ap, OM0, OM0_dot, OMQNM, tau):
+    psi4_BOB = Psi4_BOB_amp(t, Ap, tau, tp)
+    OM_BOB = Omega_BOB(t, tp, OM0, OM0_dot, OMQNM, tau)
+    return psi4_BOB/(4.0*OM_BOB**2)
+
+def Waveform_BOB(t, tp, Ap, OM0, OM0_dot, OMQNM, tau, phase0):
+    amp = h_amp_BOB(t, tp, Ap, OM0, OM0_dot, OMQNM, tau)
+    phase = Phi_BOB(t, tp, OM0, OM0_dot, OMQNM, tau)- Phi_BOB(t, tp, OM0, OM0_dot, OMQNM, tau)[0] +  phase0
+    return amp*np.exp(2j*phase)
 #def ISCO_radius()
 
 #######################################################################################################################

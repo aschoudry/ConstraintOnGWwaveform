@@ -281,6 +281,7 @@ where the instantaneous, circular GW flux $F^{(l_{max})}$ is defined as
 We can use resumed multipolar waveform expression for dominant $h_{22}$ mode given by\cite{Damour_2009}
 \begin{align}
 	h_{lm}^{\left(\epsilon\right)} = \frac{GM\nu}{c^2 R}n_{lm}^{\epsilon}c_{l+\epsilon}\left(\nu\right)x^{\left(l+\epsilon\right)/2}Y^{l-\epsilon,-m}\bigg(\frac{\pi}{2}, \Phi\bigg)\hat{S}_{\text{eff}}^{\epsilon}T_{lm}e^{i\delta_{lm}}\rho_{lm}^l
+	\label{hlm}
 \end{align}
 The building blocks of this multipolar waveform are given as a function of EOB Hamiltonian. For details see section II of \cite{Damour_2009}. We can numerically solve the above coupled ODEs for our system, where we set the smaller mass on initial circular orbit around the central body. The python code which solves above equation is added to bitbucket (\textcolor{blue}{constraintongwwaveform/script/supermomentumBlLawEOB.py}). Equation 3.15 has radiation reaction force, which is given in terms the waveform. For a comparison with BOB, we can use radiation reaction force using BOB waveform. Below is the description of code    
 \subsubsection{Description of python code}
@@ -322,6 +323,38 @@ where the superscript ``(1)'' in the second set of quantities distinguishing the
 \begin{equation}
 D\Psi_{2} = 3\tilde{\rho}\Psi_{2}, \,\, \Delta\Psi_{2} = -3\mu\Psi_{2},  \,\, \delta\Psi_{2} = 3\tau\Psi_{2} \,\, \text{and} \,\, \delta^{*}\Psi_{2} = 3\pi\Psi_{2}
 \end{equation}  
+\section{Teobrsum code for BOB initial conditions}
+TEOBResumS \cite{Nagar2018PhRD} is open source effective-one-body (EOB) waveform model which is tuned to numerical relativity. This code could be used to give initial conditions for BOB. In order to make the waveform independent of NR tuning, we can modify those section of code which are tuned to NR. For inspiral phase of non-spinning binary, NR tuning is done at following place: 1) A factor in equation \ref{hlm} which is result of non-quasi circularity of the orbit 2) The horizon absorption terms as a result of absorption of gravitation waves by black hole 3) The potential A which is modified at 5PN term due to tuning with NR. Let us go into detail for each of them in the code
+\subsection{$\hat{h}^{NQC}_{lm}$ factor in resumed $h_{lm}$} 
+The radiation reaction force that enters the equation of motion for angular momentum relies on special factorization resummation of the multi polar waveform. The resumed multipolar waveform can be written in the following way
+\begin{equation}
+	h_{lm} = h_{lm}^{\left(N, \epsilon\right)}\hat{S}_{\text{eff}}^{\left(\epsilon\right)}\hat{h}^{\text{tail}}_{lm}f_{lm}\hat{h}^{\text{NQC}}_{lm}
+\end{equation} 
+The $\hat{h}^{\text{NQC}}_{lm}$ in the above equation is computed using NR data. The TeobresumS code does it using publicly available SXS waveforms. Setting this term to unity will remove the NR information from radiation reaction force and also from the waveform. The TeobresumS code allow us set these to zero manually in the parameter file used to run the code.
+\subsection{Horizon absorption terms} 
+For details see \cite{Bernuzzi2012PhRvD}
+\subsection{Orbital interaction potential A}
+The 5PN effective correction to the interaction potential \cite{Nagar2016} $a_6$ is determined by EOB/NR comparison with a set of nonspinning SXS simulations.
+\begin{figure}
+	\includegraphics[width=5.0in]{/home/ashok/constraintongwwaveform/plots/hp_pycbc_teob_comparision.pdf}
+	\caption{The figure shows the }
+	\label{fig:teobhp}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=5.0in]{/home/ashok/constraintongwwaveform/plots/h22_pycbc_teob_comparision.pdf}
+	\caption{The figure shows the }
+	\label{fig:teobh22}
+\end{figure} 
+
+ 
+\section{Energy and Momentum of null packet at light ring}
+There is well known geometric correspondence between high-frequency quasi-normal modes of Schwarzschild black hole and null geodesic at light ring. In eikonal limit $\left(l\gg1\right)$, there is a correspondence between the parameters of a quasinormal mode $\left(\omega, A_{lm}, l, \text{and} m\right)$ and the conserved quantities along geodesics $\left(\mathcal{E}, \mathit{L_z}, \,and\, Q\right)$ \cite{Yang2012PhRvD}. We can use this correspondence to compute right hand side of equation 3.7 for BOB. 
+\begin{figure}
+ 	\includegraphics[width=5.0in]{/home/ashok/constraintongwwaveform/plots/BOB_balanceLaw_with_teobinitial_Cndtn.pdf}
+ 	\caption{The figure shows the }
+ 	\label{fig:teobh22}
+\end{figure} 
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
