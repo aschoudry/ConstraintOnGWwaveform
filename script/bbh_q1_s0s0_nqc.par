@@ -1,0 +1,67 @@
+# default parameters
+# key = val # description
+
+# ----------------------
+# physical input pars
+# ----------------------
+
+M = 46. # total binary mass
+q = 1. # mass ratio
+
+chi1 = 0. # dimensionless spin 1 z-component 
+chi2 = 0. # dimensionless spin 2 z-component 
+initial_frequency = 30.0 # initial GW frequency
+
+use_spins = 0 # use spins ?
+
+# ----------------------
+# options
+# ----------------------
+
+use_geometric_units = 0 # use geometric units for I/O ?
+
+use_speedytail = 1 # use special routine to speed up tail computation ?
+
+
+interp_uniform_grid = 0 # interpolate on uniform grid final result ?
+srate_interp = 16384.0 # sampling rate to be used for final interpolation (used if input is given in physical unit, unused otherwise)
+
+use_mode_lm = [-1] # indexes of multipoles to use in h+,hx (if [-1], use all)
+
+postadiabatic_dynamics = "yes"
+postadiabatic_dynamics_N = 8 # post-adiabatic order
+postadiabatic_dynamics_size = 500 # grid size 
+postadiabatic_dynamics_rmin = 14. # minimum radius (end of PA dynamics)
+postadiabatic_dynamics_stop = "no" # stop after post-adiabatic dynamics
+
+compute_LR = 0 # calculate LR ?
+compute_LSO = 1 # calculate LSO ?
+
+nqc = "manual" # {"auto", "manual"}
+nqc_coefs_flx = "none" # {"none", "nrfit_nospin20160209", "fromfile"}
+nqc_coefs_hlm = "none" # {"compute", "none", "nrfit_nospin20160209", "fromfile"}
+nqc_coefs_flx_file = ""
+nqc_coefs_hlm_file = ""
+
+output_dir = "./bbh_q1_noSpin_No_a5_a6_No_HrznFlx_No_nqcOutput/" # output dir
+output_hpc = 1 # output h+,hx
+output_multipoles = 1 # output multipoles
+output_lm = [0, 1, 2] # indexes of multipoles to ouput
+output_dynamics = 1 # output dynamics
+output_nqc = 0 # output NQC waveform
+output_nqc_coefs = 0 # output multipolar NQC coefs (if determined)
+output_ringdown = 0 # output ringdown waveform
+
+# ----------------------
+# Evolution settings
+# ----------------------
+
+srate =40605.0893509 # sampling rate, used if input is given in physical unit, reset based on tstep otherwise
+
+size = 250 # size of the arrays (chunks, dynamically extended)
+ringdown_extend_array = 400 # grid points to extend arrays for ringdown attachment
+
+ode_timestep = "adaptive" # specify ODE solver timestep "uniform","adaptive","adaptive+uniform_after_LSO","undefined"
+ode_stop_at_radius = 1.0 # stop ODE integration at this radius (if > 0)
+
+
