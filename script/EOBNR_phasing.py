@@ -9,8 +9,8 @@ def find_nearest1(array,value):
     return idx
 
 # Reading the strain data
-file_name_h_L4 = "/home/ashok/constraintongwwaveform/data/rhOverM_Asymptotic_GeometricUnits_L4.h5"
-file_name_h_L5 = "/home/ashok/constraintongwwaveform/data/rhOverM_Asymptotic_GeometricUnits_L5.h5"
+file_name_h_L4 = "/home/ashok/constraintongwwaveform/data/rhOverM_Asymptotic_GeometricUnits_L3.h5"
+file_name_h_L5 = "/home/ashok/constraintongwwaveform/data/rhOverM_Asymptotic_GeometricUnits_L4.h5"
 
 f_h_L4 = h5py.File(file_name_h_L4,'r+')
 f_h_L5 = h5py.File(file_name_h_L5,'r+')
@@ -38,6 +38,15 @@ for i in range(len(data_h_L5)):
     h22_real_SXS_L5=np.append(h22_real_SXS_L5,data_h_L5[i,1])
     h22_imag_SXS_L5=np.append(h22_imag_SXS_L5,data_h_L5[i,2])
 
+idx = 500
+
+time_L4 = time_L4[idx:]
+time_L5 = time_L5[idx:]
+
+h22_real_SXS_L4=h22_real_SXS_L4[idx:]
+h22_imag_SXS_L4=h22_imag_SXS_L4[idx:]
+h22_real_SXS_L5=h22_real_SXS_L5[idx:]
+h22_imag_SXS_L5=h22_imag_SXS_L5[idx:]
 
 Amp_L4 = abs(h22_real_SXS_L4 + 1j*h22_imag_SXS_L4)
 Phase_L4 = -np.unwrap(np.angle(h22_real_SXS_L4 + 1j*h22_imag_SXS_L4))
@@ -68,12 +77,13 @@ Amp_L4_intrp=interp1d(time_L4, Amp_L4, kind='cubic')
 Phase_L5_intrp=interp1d(time_L5, Phase_L5, kind='cubic')
 Amp_L5_intrp=interp1d(time_L5, Amp_L5, kind='cubic')
 
+print(len(Phase_L4), len(Phase_L5))
 
-Phase_L4_intrp=Phase_L4_intrp(time_L5)
-Amp_L4_intrp=Amp_L4_intrp(time_L5)
+Phase_L4_intrp=Phase_L4_intrp(time_L4)
+Amp_L4_intrp=Amp_L4_intrp(time_L4)
 
-Phase_L5_intrp=Phase_L5_intrp(time_L5)
-Amp_L5_intrp=Amp_L5_intrp(time_L5)
+Phase_L5_intrp=Phase_L5_intrp(time_L4)
+Amp_L5_intrp=Amp_L5_intrp(time_L4)
 
 t_shift_NR_L4_idx = find_nearest1(h22_real_SXS_L4, max(h22_real_SXS_L4))
 time_L4 = time_L4 - time_L4[t_shift_NR_L4_idx]
@@ -81,8 +91,8 @@ time_L4 = time_L4 - time_L4[t_shift_NR_L4_idx]
 t_shift_NR_L5_idx = find_nearest1(h22_real_SXS_L5, max(h22_real_SXS_L5))
 time_L5 = time_L5 - time_L5[t_shift_NR_L5_idx]
 
-plt.plot(time_L5, abs(Phase_L5_intrp-Phase_L4_intrp))
-plt.fill_between(time_L5, -abs(Phase_L5_intrp-Phase_L4_intrp), abs(Phase_L5_intrp-Phase_L4_intrp), alpha=0.2)
+plt.plot(time_L4, abs(Phase_L5_intrp-Phase_L4_intrp))
+plt.fill_between(time_L4, -abs(Phase_L5_intrp-Phase_L4_intrp), abs(Phase_L5_intrp-Phase_L4_intrp), alpha=0.2)
 plt.show()
 
 # Loda data for EOB dynamics
