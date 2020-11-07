@@ -50,23 +50,39 @@ plt.ylabel(rf"$\mathrm{{arg}} \left[ h^{{{2}, {2}}} \right]$")
 plt.legend()
 plt.show()
 
+# Load data from teobResumm code
+t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ringdown_l2_m2_reim.txt', unpack=True)
+t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ringdown_l2_m2.txt', unpack=True)
 
-#plt.plot(w_sliced_L3.t, abs(Phase_L3-Phase_L4.interpolate(w_sliced_L3.t)), label='arg unwrapped')
-plt.fill_between(w_sliced_L3.t, -abs(Phase_L3-Phase_L4.interpolate(w_sliced_L3.t)), abs(Phase_L3-Phase_L4.interpolate(w_sliced_L3.t)), alpha=0.2)
-plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
-plt.ylabel(rf"$\mathrm{{arg}} \left[ h^{{{2}, {2}}} \right]$")
-plt.legend()
-plt.show()
 
-t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/bbh_q1_noSpin_NRtnd_a5_a6_HrznFlx_auto_nqcOutput/hlm_ringdown_l2_m2_reim.txt', unpack=True)
-t_2_h22, hp_2_h22, hc_2_h22 = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/bbh_q1_noSpin_No_a5_a6_No_HrznFlx_No_nqcOutput/hlm_ringdown_l2_m2_reim.txt', unpack=True)
 
-plt.plot(w_2_2_L3.real.t- 4060.0, np.sqrt(28.0)*w_2_2_L3.real.data, 'r--')
-plt.plot(t_1_h22, hp_1_h22, label=r'teobRsum NR tuned $h_{22}$')
-plt.plot(t_2_h22, hp_2_h22, 'c', label=r'$h_{22}$ with $a_{5}=0$, $a_{6}=0$, $F_{H}=0$ and no NCQ')
+plt.plot(w_2_2_L3.real.t-w_2_2_L3.real.t[0], w_2_2_L3.real.data, 'r--')
+plt.plot(t_1_h22-t_1_h22[0]+31, hp_1_h22*(max(w_2_2_L3.real.data)/max(hp_1_h22)), label=r'teobRsum NR tuned $h_{22}$')
 #plt.xlim(-100, 75)
 #plt.ylim(-2.0, 2.0)
 plt.xlabel('time')
 plt.ylabel(r'$h_{22}$')
+plt.show()
+
+# Phase difference between teobResumm and SXS waveform
+Phase_errr = Phase_L3-Phase_L4.interpolate(w_sliced_L3.t)
+time_h22 = t_1_h22-t_1_h22[0]
+time_SXS_L4 = w_sliced_L4.t-w_2_2_L3.real.t[0]
+time_SXS_L3 = w_sliced_L3.t-w_2_2_L3.real.t[0]
+
+Phase_L4 = Phase_L4-Phase_L4[0]
+h22_phase = h22_phase- h22_phase[0]
+
+plt.plot(time_h22, h22_phase)
+plt.plot(time_SXS_L4, Phase_L4, 'r--')
+plt.show()
+
+h22_phase_intrp=interp1d(time_h22, h22_phase, kind='cubic')
+h22_phase_intrp=h22_phase_intrp(time_SXS_L4)
+h22_phase_intrp-h22_phase_intrp-h22_phase_intrp[0]
+
+
+plt.plot(time_SXS_L4, h22_phase_intrp-Phase_L4, 'k')
+plt.fill_between(time_SXS_L3, -abs(Phase_errr), abs(Phase_errr), alpha=0.2)
 plt.show()
 
