@@ -7,19 +7,20 @@ import sxs
 from scipy.interpolate import interp1d
 
 extrapolation_order = 4
-w_L3 = sxs.load("SXS:BBH:2085/Lev(3)/rhOverM", extrapolation_order=extrapolation_order)
-w_L4 = sxs.load("SXS:BBH:2085/Lev(4)/rhOverM", extrapolation_order=extrapolation_order)
+w_L3 = sxs.load("SXS:BBH:0002/Lev(5)/rhOverM", extrapolation_order=extrapolation_order)
+w_L4 = sxs.load("SXS:BBH:0002/Lev(6)/rhOverM", extrapolation_order=extrapolation_order)
 
 # Remove junk radiation
-metadata_L3 = sxs.load("SXS:BBH:2085/Lev(3)/metadata.json")
+metadata_L3 = sxs.load("SXS:BBH:0002/Lev(5)/metadata.json")
 metadata_L3.reference_time
-metadata_L4 = sxs.load("SXS:BBH:2085/Lev(4)/metadata.json")
+metadata_L4 = sxs.load("SXS:BBH:0002/Lev(6)/metadata.json")
 metadata_L4.reference_time
 
+shift = 1000
 reference_index_L3 = w_L3.index_closest_to(metadata_L3.reference_time)
-w_sliced_L3 = w_L3[reference_index_L3:]
+w_sliced_L3 = w_L3[reference_index_L3+shift:]
 reference_index_L4 = w_L4.index_closest_to(metadata_L4.reference_time)
-w_sliced_L4 = w_L4[reference_index_L4:]
+w_sliced_L4 = w_L4[reference_index_L4+shift:]
 
 #Plot h22 waveform at differnet resolution
 
@@ -47,6 +48,10 @@ plt.show()
 Phase_L4 = -w_sliced_L4.arg_unwrapped[:, w_sliced_L4.index(2, 2)]
 Phase_L3 = -w_sliced_L3.arg_unwrapped[:, w_sliced_L3.index(2, 2)]
 
+# Instantanous frequency
+Inst_frq_L4 = Phase_L4.dot
+Inst_frq_ini = Inst_frq_L4.data.tolist()[0]
+
 plt.plot(w_sliced_L4.t, Phase_L4, label='arg unwrapped')
 plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
 plt.ylabel(rf"$\mathrm{{arg}} \left[ h^{{{2}, {2}}} \right]$")
@@ -61,9 +66,28 @@ t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ring
 #t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/data/hlm_ringdown_l2_m2.txt', unpack=True)
 
 phase_teob = -np.unwrap(np.angle(hp_1_h22 + 1j*hc_1_h22))
+omega = np.gradient(phase_teob,t_1_h22)
 
-plt.plot(w_2_2_L3.real.t-w_2_2_L3.real.t[0], w_2_2_L3.real.data, 'r--')
-plt.plot(t_1_h22-t_1_h22[0]+31, hp_1_h22*(max(w_2_2_L3.real.data)/max(hp_1_h22)), label=r'teobRsum NR tuned $h_{22}$')
+t_NR_phase0_idx = BOB.find_nearest1(omega, Inst_frq_ini)
+
+#### keep data only after f0 in teobNR data
+t_1_h22 = t_1_h22[t_NR_phase0_idx:]
+hp_1_h22 = hp_1_h22[t_NR_phase0_idx:]
+hc_1_h22 = hc_1_h22[t_NR_phase0_idx:]
+phase_teob = phase_teob[t_NR_phase0_idx:]
+omega = omega[t_NR_phase0_idx:]
+
+####
+
+
+plt.plot(t_1_h22-t_1_h22[0], omega)
+plt.plot(Inst_frq_L4.t - Inst_frq_L4.t[0], Inst_frq_L4.data, 'r--')
+plt.show()
+
+#plt.plot(t_1_h22-t_1_h22[0]+31, hp_1_h22*(max(w_2_2_L3.real.data)/max(hp_1_h22)), label=r'teobRsum NR tuned $h_{22}$')
+plt.plot(t_1_h22-t_1_h22[0]+55, hp_1_h22, label=r'teobRsum NR tuned $h_{22}$')
+plt.plot(w_2_2_L3.real.t-w_2_2_L3.real.t[0], 3.9*w_2_2_L3.real.data, 'r--')
+
 #plt.xlim(-100, 75)
 #plt.ylim(-2.0, 2.0)
 plt.xlabel('time')
@@ -72,7 +96,7 @@ plt.show()
 
 # Phase difference between teobResumm and SXS waveform
 Phase_errr = Phase_L3-Phase_L4.interpolate(w_sliced_L3.t)
-time_h22 = t_1_h22-t_1_h22[0]+31
+time_h22 = t_1_h22-t_1_h22[0]
 time_SXS_L4 = w_sliced_L4.t-w_2_2_L3.real.t[0]
 time_SXS_L3 = w_sliced_L3.t-w_2_2_L3.real.t[0]
 
@@ -84,7 +108,7 @@ plt.plot(time_h22, h22_phase)
 plt.plot(time_SXS_L4, Phase_L4, 'r--')
 plt.show()
 
-idx_sort=30
+idx_sort=300
 time_SXS_L4 =time_SXS_L4[idx_sort:]
 Phase_L4 = Phase_L4[idx_sort:]
 
@@ -96,6 +120,7 @@ phase_diff_NR_teob = h22_phase_intrp-Phase_L4
 phase_diff_NR_teob=phase_diff_NR_teob-phase_diff_NR_teob[0]
 
 plt.plot(time_SXS_L4, phase_diff_NR_teob, 'k')
+#plt.axvline(w_L4.max_norm_time(), c="black", ls="dotted")
 plt.fill_between(time_SXS_L3, -abs(Phase_errr), abs(Phase_errr), alpha=0.2)
 plt.show()
 
@@ -157,3 +182,10 @@ plt.ylabel(r'$h_{22}$')
 
 plt.legend()
 plt.show()
+
+## Memory terms from SXS code
+
+#memory = sxs.waveforms.memory.J_E(w_L4 , start_time=1000.0)
+
+#plt.plot(memory)
+#plt.show()
