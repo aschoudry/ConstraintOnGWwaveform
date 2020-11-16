@@ -6,10 +6,10 @@ import numpy as np
 import sxs
 from scipy.interpolate import interp1d
 
-## Some good q=1 nospin BBH file nums (1132, 3, 4), (1155, 2, 3)
+## Some good q=1 nospin BBH file nums (1132, 3, 4), (1155, 2, 3),(0002, 5,6)
 
-file_num = 1132
-L1=3; L2=4
+file_num = '0002'
+L1=5; L2=6
 
 extrapolation_order = 4
 w_L3 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L1)+")/rhOverM", extrapolation_order=extrapolation_order)
@@ -21,7 +21,7 @@ metadata_L3.reference_time
 metadata_L4 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/metadata.json")
 metadata_L4.reference_time
 
-shift = 200
+shift = 160
 reference_index_L3 = w_L3.index_closest_to(metadata_L3.reference_time)
 w_sliced_L3 = w_L3[reference_index_L3+shift:]
 reference_index_L4 = w_L4.index_closest_to(metadata_L4.reference_time)
@@ -29,8 +29,8 @@ w_sliced_L4 = w_L4[reference_index_L4+shift:]
 
 #Plot h22 waveform at differnet resolution
 
-w_2_2_L4 = w_sliced_L4[:, w_L4.index(2, 2)]
-w_2_2_L3 = w_sliced_L3[:, w_L3.index(2, 2)]
+w_2_2_L4 = w_sliced_L4[:, w_sliced_L4.index(2, 2)]
+w_2_2_L3 = w_sliced_L3[:, w_sliced_L3.index(2, 2)]
 
 plt.plot(w_2_2_L4.real.t, w_2_2_L4.real.data)
 plt.plot(w_2_2_L3.real.t, w_2_2_L3.real.data, 'r--')
@@ -52,8 +52,14 @@ plt.show()
 Phase_L4 = -w_sliced_L4.arg_unwrapped[:, w_sliced_L4.index(2, 2)]
 Phase_L3 = -w_sliced_L3.arg_unwrapped[:, w_sliced_L3.index(2, 2)]
 
+Phase_L4_wrapd = -w_sliced_L4.arg[:, w_sliced_L4.index(2, 2)]
+Phase_L3_wrapd = -w_sliced_L3.arg[:, w_sliced_L3.index(2, 2)]
+
+
 # Instantanous frequency
-Inst_frq_L4 = Phase_L4.dot
+Inst_frq_L4 = Phase_L4_wrapd.dot
+frq_L4 = Phase_L4.dot
+
 Inst_frq_ini = Inst_frq_L4.data.tolist()[0]
 
 plt.plot(w_sliced_L4.t, Phase_L4, label='arg unwrapped')
@@ -66,13 +72,17 @@ plt.show()
 t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ringdown_l2_m2_reim.txt', unpack=True)
 t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ringdown_l2_m2.txt', unpack=True)
 
-#t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/data/hlm_ringdown_l2_m2_reim.txt', unpack=True)
-#t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/data/hlm_ringdown_l2_m2.txt', unpack=True)
+#t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresums/C/data/hlm_interp_l2_m2_reim.txt', unpack=True)
+#t_2_h22, h22_amp, h22_phase = np.loadtxt('/home/ashok/teobresums/C/data/hlm_interp_l2_m2.txt', unpack=True)
 
 phase_teob = -np.unwrap(np.angle(hp_1_h22 + 1j*hc_1_h22))
 omega = np.gradient(phase_teob,t_1_h22)
 
-t_NR_phase0_idx = BOB.find_nearest1(omega, Inst_frq_ini)-1
+phase_teob_wrap = -np.angle(hp_1_h22 + 1j*hc_1_h22)
+omega_wrap = np.gradient(phase_teob_wrap, t_1_h22)
+#omega_dot = np.gradient(omega,t_1_h22)
+
+t_NR_phase0_idx = BOB.find_nearest1(omega_wrap, Inst_frq_ini)
 
 #### keep data only after f0 in teobNR data
 t_1_h22 = t_1_h22[t_NR_phase0_idx:]
@@ -85,7 +95,7 @@ omega = omega[t_NR_phase0_idx:]
 
 
 plt.plot(t_1_h22-t_1_h22[0], omega)
-plt.plot(Inst_frq_L4.t - Inst_frq_L4.t[0], Inst_frq_L4.data, 'r--')
+plt.plot(frq_L4.t - frq_L4.t[0], frq_L4.data, 'r--')
 plt.show()
 
 #plt.plot(t_1_h22-t_1_h22[0]+31, hp_1_h22*(max(w_2_2_L3.real.data)/max(hp_1_h22)), label=r'teobRsum NR tuned $h_{22}$')
@@ -118,14 +128,14 @@ plt.plot(time_h22, h22_phase)
 plt.plot(time_SXS_L4, Phase_L4, 'r--')
 plt.show()
 
-idx_strt=300
-idx_end=-3000
+idx_strt=30
+idx_end=-5000
 time_SXS_L4 =time_SXS_L4[idx_strt:idx_end]
 Phase_L4 = Phase_L4[idx_strt:idx_end]
 
 h22_phase_intrp=interp1d(time_h22, h22_phase, kind='cubic')
 h22_phase_intrp=h22_phase_intrp(time_SXS_L4)
-h22_phase_intrp-h22_phase_intrp-h22_phase_intrp[0]
+h22_phase_intrp-h22_phase_intrp#-h22_phase_intrp[0]
 
 phase_diff_NR_teob = h22_phase_intrp-Phase_L4
 phase_diff_NR_teob=phase_diff_NR_teob-phase_diff_NR_teob[0]
