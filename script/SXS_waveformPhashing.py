@@ -21,11 +21,22 @@ metadata_L3.reference_time
 metadata_L4 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/metadata.json")
 metadata_L4.reference_time
 
-shift = 160
-reference_index_L3 = w_L3.index_closest_to(metadata_L3.reference_time)
-w_sliced_L3 = w_L3[reference_index_L3+shift:]
-reference_index_L4 = w_L4.index_closest_to(metadata_L4.reference_time)
-w_sliced_L4 = w_L4[reference_index_L4+shift:]
+# Shift to some reference time
+wl3_lst = w_L3[:, w_L3.index(2, 2)].real.data.tolist()
+wl4_lst = w_L4[:, w_L4.index(2, 2)].real.data.tolist()
+
+wl3_max_idx =  BOB.find_nearest1(wl3_lst, max(wl3_lst))
+wl4_max_idx =  BOB.find_nearest1(wl4_lst, max(wl4_lst))
+
+time_l3_max = w_L3[:, w_L3.index(2, 2)].t[wl3_max_idx]
+time_l4_max = w_L4[:, w_L4.index(2, 2)].t[wl4_max_idx]
+
+init = 1500
+
+reference_index_L3 = w_L3.index_closest_to(time_l3_max-init)
+w_sliced_L3 = w_L3[reference_index_L3:]
+reference_index_L4 = w_L4.index_closest_to(time_l4_max-init)
+w_sliced_L4 = w_L4[reference_index_L4:]
 
 #Plot h22 waveform at differnet resolution
 
@@ -99,7 +110,7 @@ plt.plot(frq_L4.t - frq_L4.t[0], frq_L4.data, 'r--')
 plt.show()
 
 #plt.plot(t_1_h22-t_1_h22[0]+31, hp_1_h22*(max(w_2_2_L3.real.data)/max(hp_1_h22)), label=r'teobRsum NR tuned $h_{22}$')
-plt.plot(t_1_h22-t_1_h22[0], hp_1_h22, label=r'teobRsum NR tuned $h_{22}$')
+plt.plot(t_1_h22-t_1_h22[0], -hp_1_h22, label=r'teobRsum NR tuned $h_{22}$')
 plt.plot(w_2_2_L3.real.t-w_2_2_L3.real.t[0], 3.9*w_2_2_L3.real.data, 'r--')
 
 #plt.xlim(-100, 75)
@@ -128,8 +139,8 @@ plt.plot(time_h22, h22_phase)
 plt.plot(time_SXS_L4, Phase_L4, 'r--')
 plt.show()
 
-idx_strt=30
-idx_end=-5000
+idx_strt=0
+idx_end=-3500
 time_SXS_L4 =time_SXS_L4[idx_strt:idx_end]
 Phase_L4 = Phase_L4[idx_strt:idx_end]
 
