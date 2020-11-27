@@ -135,11 +135,25 @@ phase_diff_NR_teob=phase_diff_NR_teob-phase_diff_NR_teob[0]
 plt.plot(time_SXS_L4, phase_diff_NR_teob, 'k')
 plt.fill_between(time_SXS, -abs(Phase_errr), abs(Phase_errr), alpha=0.2)
 plt.show()
+# Compute quasinormal frrequencies given initial spins and symmetric mass ratio
+
+def Mf_and_Omega_QNM(alpha1, alpha2, nu):
+    p0 = 0.04826; p1 = 0.01559; p2 = 0.00485; s4 = -0.1229; s5 = 0.4537; 
+    t0 = -2.8904; t2 = -3.5171; t3 = 2.5763; q = 1.0; eta = nu; theta = np.pi/2; 
+    Mf = 1-p0 - p1*(alpha1+alpha2)-p2*pow(alpha1+alpha2,2)
+    ab = (pow(q,2)*alpha1+alpha2)/(pow(q,2)+1)
+    alpha = ab + s4*eta*pow(ab,2) + s5*pow(eta,2)*ab + t0*eta*ab + 2*np.sqrt(3)*eta + t2*pow(eta,2) + t3*pow(eta,3)
+    OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
+    return alpha, Mf
+
+nu = 0.25; alpha1=0.0; alpha2=0.0
+af, Mf = Mf_and_Omega_QNM(alpha1, alpha2, nu)
+
 
 # BOB waveform
 # Final state variable
-af = 0.6864427
-Mf = 0.9517857
+#af = 0.6864427
+#Mf = 0.9517857
 M_tot = 1
 t_scale = M_tot*4.92549094830932e-06 
 
@@ -154,6 +168,9 @@ tau = 2*Q/om_qnm
 t_1_h22, hp_1_h22, hc_1_h22 = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/bbh_q1_noSpin_NRtnd_a5_a6_HrznFlx_auto_nqcOutput/hlm_ringdown_l2_m2_reim.txt', unpack=True)
 t_2_h22, hp_2_h22, hc_2_h22 = np.loadtxt('/home/ashok/teobresumsNoNRtn/teobresums/C/bbh_q1_noSpin_No_a5_a6_No_HrznFlx_No_nqcOutput/hlm_ringdown_l2_m2_reim.txt', unpack=True)
 
+#t_2_h22, hp_2_h22, hc_2_h22 = np.loadtxt('/home/ashok/teobresums/C/data/hlm_ringdown_l2_m2_reim.txt', unpack=True)
+
+
 t_shift_1_idx = BOB.find_nearest1(hp_1_h22, max(hp_1_h22))
 t_1_h22 = t_1_h22 - t_1_h22[t_shift_1_idx]
 
@@ -163,13 +180,16 @@ t_2_h22 = t_2_h22 - t_2_h22[t_shift_2_idx]
 # Omega and Omega_dot from teobResum
 
 h_tot = hp_2_h22 + 1j*hc_2_h22
+
 amp = abs(h_tot)
 phase = -np.unwrap(np.angle(h_tot))
 
 omega = np.gradient(phase,t_2_h22)
 omega_dot = np.gradient(omega,t_2_h22)
 
-t_ref_idx = BOB.find_nearest1(t_2_h22, -15.0)
+t_ini_teob = -15.4 # time at which initial conditions are given
+
+t_ref_idx = BOB.find_nearest1(t_2_h22, t_ini_teob)
 t0 = t_2_h22[t_ref_idx]
 OMEGA_ref = omega[t_ref_idx]/2.0; OMEGA_dot_ref = omega_dot[t_ref_idx]/2.0; phase0 = phase[t_ref_idx]
 tp = BOB.t_peak(t0, OMEGA_ref, OMEGA_dot_ref, OM_QNM, tau)
@@ -198,14 +218,15 @@ plt.legend()
 plt.show()
 
 # Generate a complete waveform BOB+TEOB
+BOB_idx_cut = 300
 
 time_teob = t_2_h22[:t_ref_idx]
 h22_teob = hp_2_h22[:t_ref_idx]
-time_bob = t_BOB[t_ref_idx-200:]
-h22_bob = hp_BOB[t_ref_idx-200:]
+time_bob = t_BOB[t_ref_idx-BOB_idx_cut:]
+h22_bob = hp_BOB[t_ref_idx-BOB_idx_cut:]
 
 plt.plot(time_bob, h22_bob)
-plt.plot(w_2_2_L3.real.t-time_l3_max, 4.0*w_2_2_L3.real.data, 'k--')
+plt.plot(w_2_2_L3.real.t-time_l3_max, 3.9*w_2_2_L3.real.data, 'k--')
 plt.plot(t_1_h22, hp_1_h22, 'c--')
 plt.show()
 
