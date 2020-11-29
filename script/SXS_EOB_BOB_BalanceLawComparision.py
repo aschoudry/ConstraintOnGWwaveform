@@ -8,15 +8,15 @@ from scipy.interpolate import interp1d
 import os
 from EOBUtils import *
 
-## Some good q=1 nospin BBH file nums (1132, 3, 4), (1155, 2, 3),(0002, 5,6), spinning (0160, 3,4)
-
+## Some good q=1 nospin BBH file nums (1132, 3, 4), (1155, 2, 3),(0002, 5,6), (1122, 4,5), spinning (0160, 3,4)
+catalog = sxs.load("catalog")
 file_num = '1122'
 L1=4; L2=5
 
 extrapolation_order = 4
 w_L3 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L1)+")/rhOverM", extrapolation_order=extrapolation_order)
 w_L4 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/rhOverM", extrapolation_order=extrapolation_order)
-
+metadata = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/metadata.json")
 
 # Shift to some reference time
 wl3_lst = w_L3[:, w_L3.index(2, 2)].real.data.tolist()
@@ -29,7 +29,7 @@ time_l3_max = w_L3[:, w_L3.index(2, 2)].t[wl3_max_idx]
 time_l4_max = w_L4[:, w_L4.index(2, 2)].t[wl4_max_idx]
 
 # time before peak at which plotting should start
-ini_cut = 100
+ini_cut = 1000
 end_cut = 60 # remove data from end of the waveform
 
 reference_index_L3_ini = w_L3.index_closest_to(time_l3_max-ini_cut)
@@ -56,7 +56,11 @@ def Mf_and_af(alpha1, alpha2, nu):
     OM_QNM = (1.0 - 0.63*pow(1.0 - alpha, 0.3))/(2*Mf)
     return alpha, Mf
 
-nu = 0.25; alpha1=0.4376; alpha2=0.4376
+nu = 0.25
+alpha1=np.linalg.norm(metadata['initial_dimensionless_spin1'])
+alpha2=np.linalg.norm(metadata['initial_dimensionless_spin2'])
+
+print(alpha1, alpha2)
 af, Mf = Mf_and_af(alpha1, alpha2, nu)
 
 
@@ -158,7 +162,7 @@ phase = -np.unwrap(np.angle(h_tot))
 omega = np.gradient(phase,t_2_h22)
 omega_dot = np.gradient(omega,t_2_h22)
 
-t_ini_teob = -23.5 # time at which initial conditions are given
+t_ini_teob = -24.0 # time at which initial conditions are given
 
 t_ref_idx = BOB.find_nearest1(t_2_h22, t_ini_teob)
 t0 = t_2_h22[t_ref_idx]
@@ -187,18 +191,12 @@ h22_bob = hp_BOB[t_ref_idx-BOB_idx_cut:]
 plt.plot(time_bob, h22_bob)
 plt.plot(w_2_2_L3.real.t-time_l3_max, 3.9*w_2_2_L3.real.data, 'k--')
 plt.plot(t_2_h22, hp_2_h22, 'c--')
-plt.xlim(-100.0, 80.0)
+plt.xlim(-200.0, 80.0)
 plt.show()
 
-"""
-Script to auto generate parfiles and run them
+# Campute psi2 from eqn 11 in https://arxiv.org/pdf/2011.01309.pdf
 
-Given a template parfile with basic setup, 
-generates parfiles for all combination of a given subset of parameters
-(e.g. to vary binary masses and spins). Then it run the code.
 
-SB 10/2018
-"""
 
 
 
