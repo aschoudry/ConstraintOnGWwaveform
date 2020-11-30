@@ -29,7 +29,7 @@ time_l3_max = w_L3[:, w_L3.index(2, 2)].t[wl3_max_idx]
 time_l4_max = w_L4[:, w_L4.index(2, 2)].t[wl4_max_idx]
 
 # time before peak at which plotting should start
-ini_cut = 1000
+ini_cut = 2000
 end_cut = 60 # remove data from end of the waveform
 
 reference_index_L3_ini = w_L3.index_closest_to(time_l3_max-ini_cut)
@@ -196,7 +196,18 @@ plt.show()
 
 # Campute psi2 from eqn 11 in https://arxiv.org/pdf/2011.01309.pdf
 
+h = w_L4
+mts_h = sxs.waveforms.memory.MTS(h)
+psi2 = -0.25*(mts_h.eth.eth.re + 0.25*(mts_h.dot*mts_h.bar).re)
 
+psi2_22 = psi2[:, psi2.index(2, 2)]
+
+
+plt.plot(psi2_22.real.t, psi2_22.real.data)
+plt.plot(psi2)
+plt.show()
+
+#plt.plot(w_2_2_L3.real.t-time_l3_max, 3.9*w_2_2_L3.real.data, 'k--')
 
 
 
