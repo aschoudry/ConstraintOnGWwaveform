@@ -13,9 +13,12 @@ catalog = sxs.load("catalog")
 file_num = '1122'
 L1=4; L2=5
 
-extrapolation_order = 4
-w_L3 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L1)+")/rhOverM", extrapolation_order=extrapolation_order)
-w_L4 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/rhOverM", extrapolation_order=extrapolation_order)
+L3 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L1)+")/rhOverM")
+L4 = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/rhOverM")
+
+w_L3 = L3['OutermostExtraction.dir'] 
+w_L4 = L4['OutermostExtraction.dir']
+
 metadata = sxs.load("SXS:BBH:"+str(file_num)+"/Lev("+str(L2)+")/metadata.json")
 
 # Shift to some reference time
@@ -197,16 +200,46 @@ plt.show()
 # Campute psi2 from eqn 11 in https://arxiv.org/pdf/2011.01309.pdf
 
 h = w_L4
-mts_h = sxs.waveforms.memory.MTS(h)
-psi2 = -0.25*(mts_h.eth.eth.re + 0.25*(mts_h.dot*mts_h.bar).re)
+reference_index = w_L4.index_closest_to(metadata.reference_time)
+h_sliced = w_L4[reference_index:]
 
-psi2_22 = psi2[:, psi2.index(2, 2)]
+mts_h = sxs.waveforms.memory.MTS(h_sliced)
+eth2_h_re = mts_h.eth.eth.re
+h_dot_h_bar_re = (mts_h.dot*mts_h.bar).re
 
+plt.plot((eth2_h_re)[:,eth2_h_re.index(2, 0)], label=r"$r\, \eth^2 h^{(2,0)}$")
+plt.plot((eth2_h_re)[:,eth2_h_re.index(2, 1)], label=r"$r\, \eth^2 h^{(2,1)}$")
+plt.plot((eth2_h_re)[:,eth2_h_re.index(2, -1)], label=r"$r\, \eth^2 h^{(2,-1)}$")
 
-plt.plot(psi2_22.real.t, psi2_22.real.data)
-plt.plot(psi2)
+plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
+plt.legend()
+
+plt.savefig("/home/ashok/constraintongwwaveform/plots/eth2_h_re.pdf")
 plt.show()
 
+plt.plot((h_dot_h_bar_re)[:,h_dot_h_bar_re.index(2, 0)], label=r"$r\, \dot{h}\bar{h}^{(2,0)}$")
+plt.plot((h_dot_h_bar_re)[:,h_dot_h_bar_re.index(2, 1)], label=r"$r\, \dot{h}\bar{h}^{(2,1)}$")
+plt.plot((h_dot_h_bar_re)[:,h_dot_h_bar_re.index(2, -1)], label=r"$r\, \dot{h}\bar{h}^{(2,-1)}$")
+
+plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
+plt.legend()
+
+plt.savefig("/home/ashok/constraintongwwaveform/plots/h_dot_h_bar_re.pdf")
+plt.show()
+
+
+psi2 = -0.25*(eth2_h_re + 0.25*h_dot_h_bar_re)
+
+plt.plot((psi2)[:,psi2.index(2, 0)], label=r"$r\, \Psi_{2}^{(2,0)}$")
+plt.plot((psi2)[:,psi2.index(2, 1)], label=r"$r\, \Psi_{2}^{(2,1)}$")
+plt.plot((psi2)[:,psi2.index(2, -1)], label=r"$r\, \Psi_{2}^{(2,-1)}$")
+
+plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
+plt.ylabel(r"$r\, h^{(l,m)}/M$");
+plt.legend()
+plt.savefig("/home/ashok/constraintongwwaveform/plots/Psi2_SXSdata.pdf")
+
+plt.show()
 #plt.plot(w_2_2_L3.real.t-time_l3_max, 3.9*w_2_2_L3.real.data, 'k--')
 
 
