@@ -1,6 +1,9 @@
+import sys
+sys.path.insert(0, '../src')
 import matplotlib.pyplot as plt
 import numpy as np
 import sxs
+import BOB_functions as BOB
 
 
 # Load SXS data
@@ -56,14 +59,27 @@ time_S0p99 = h_mem_S0p99.t
 h_mem_20_S0 = (h_mem_S0)[:,h_mem_S0.index(2, 0)].data.real*m2Y20
 h_mem_20_S0p99 = (h_mem_S0p99)[:,h_mem_S0p99.index(2, 0)].data.real*m2Y20
 
-plt.plot(time_S0p99-time_S0p99[0], h_mem_20_S0p99,'c', label=r"0.99 SXS code")
-plt.plot(time_S0-time_S0[0], h_mem_20_S0,'k', label=r"0.00 SXS code")
-plt.plot(timeNR_S0-timeNR_S0[0], hmem_S0,'r--', label=r"0.00 Favata's epression")
-plt.plot(timeNR_S0p99-timeNR_S0p99[0], hmem_S0p99,'b--', label=r"0.00 Favata's epression")
+# shift merger time BOB.find_nearest1(hp_2_h22, max(hp_2_h22))
+idx_SXS_S0 = BOB.find_nearest1(h_mem_20_S0, 0.5*max(h_mem_20_S0))
+idx_SXS_S0p99 = BOB.find_nearest1(h_mem_20_S0p99, 0.5*max(h_mem_20_S0p99))
+idx_FVT_S0 = BOB.find_nearest1(hmem_S0, 0.5*max(hmem_S0))
+idx_FVT_S0p99 = BOB.find_nearest1(hmem_S0p99, 0.5*max(hmem_S0p99))
 
-plt.xlabel(r"$J_E^{(2,0)}$")
+time_S0 = time_S0-time_S0[idx_SXS_S0]
+time_S0p99 = time_S0p99-time_S0p99[idx_SXS_S0p99]
+timeNR_S0 = timeNR_S0 - timeNR_S0[idx_FVT_S0]
+timeNR_S0p99 = timeNR_S0p99 - timeNR_S0p99[idx_FVT_S0p99]
+
+
+
+plt.plot(time_S0p99, h_mem_20_S0p99,'c', label=r"0.99 SXS code")
+plt.plot(time_S0, h_mem_20_S0,'k', label=r"0.00 SXS code")
+plt.plot(timeNR_S0, hmem_S0,'r--', label=r"0.00 Favata's epression")
+plt.plot(timeNR_S0p99, hmem_S0p99,'b--', label=r"0.99 Favata's epression")
+plt.xlim(-2000, 500)
+plt.ylabel(r"$J_E^{(2,0)}$")
 plt.xlabel(r"$(t_{\mathrm{corr}} - r_\ast)/M$")
 plt.legend()
-
+plt.savefig("/home/ashok/constraintongwwaveform/plots/MemoryComparisioSXSpkgVsFavata.pdf")
 plt.show()
 
