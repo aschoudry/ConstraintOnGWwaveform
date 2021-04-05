@@ -43,6 +43,7 @@
 \affiliation{Department of Physics and Astronomy, West Virginia University, Morgantown, WV 26506, USA}
 
 \begin{abstract}
+	I looked at the accuracy of gravitational waveforms using the recently proposed super momentum balance laws by Ashtekar and his collaborators (https://arxiv.org/abs/1906.00913). The gravitational waveform for compact binary sources is obtained using various analytical and numerical methods, using various approximations which often would not give an exact result according to Einstein’s equation. The accuracy of these approximations can be determined by looking at these supermomentum balance laws on asymptotic space-times. My interest was in studying the violations to these balance laws in the context of the recently proposed Backward-one-body model (https://arxiv.org/abs/1810.00040). This analytical model provides a highly accurate description of binary black hole merger waveforms,s by looking at the behavior of a null congruence at the light ring of an effective background spacetime corresponding to merger’s end state.This model does not tell us how the background metric should evolve, but we can use the supermomentum balance laws to construct the metric, or compare various approaches to modeling the metric by computing their resulting violations of these balance laws. I hope to have some initial results soon from this still-in-progress project.
 \end{abstract}
 
 \maketitle
@@ -355,6 +356,48 @@ There is well known geometric correspondence between high-frequency quasi-normal
  	\caption{The figure shows the }
  	\label{fig:teobh22}
 \end{figure} 
+
+\section{Comparing Supermomentum Balance Law Violations for different models}
+
+The super-momentum balance law in equation 1.1 can in rewritten using the expression for $\Psi_{2}$  the asymptotic past and future in the following way.
+
+\begin{equation}
+	G M_{i_0} - \frac{G M_{i^+}}{\gamma^3\left(1- \frac{\vec{v}}{c}\cdot\hat{x}\right)^3} = -\int_{u_{1}}^{u_{2}} du \left[|\dot{\sigma^{o}}|^{2} - \Re\left(\eth^{2}\dot{\bar{\sigma}}^{o} \right) \right](u, \theta, \phi)
+\end{equation}  
+The evolution of the remnant mass and kick velocities can be obtained using the following equations
+\begin{align}
+	E_{GW}\left(t\right) =& \frac{1}{16\pi}\sum_{l=2}^{\infty}\sum_{m=-l}^{l}\int_{-\infty}^{t}|\dot{h}_{lm}|^2 dt'\\
+	M\left(t\right) =& M_{0} - E_{GW}\left(t\right)\\
+	M\left(t\right)v_{x}\left(t\right) = & -\frac{1}{8\sqrt{6\pi}}\sum_{l'=2}^{\infty}\sum_{l''=2}^{\infty}\sum_{m'= -l'}^{l'}\sum_{m''= -l''}^{l''}\left(-1\right)^{1+m''}
+	\times \left(G^{2-20}_{l'l''1 m'-m''1} - G^{2-20}_{l'l''1 m'-m''-1}\right)\times \int_{-\infty}^{t}\dot{h}_{l'm'}\dot{\bar{h}}_{l''m''}\\
+	M\left(t\right)v_{y}\left(t\right) = & \frac{i}{8\sqrt{6\pi}}\sum_{l'=2}^{\infty}\sum_{l''=2}^{\infty}\sum_{m'= -l'}^{l'}\sum_{m''= -l''}^{l''}\left(-1\right)^{1+m''}
+	\times \left(G^{2-20}_{l'l''1 m'-m''1} + G^{2-20}_{l'l''1 m'-m''-1}\right)\times \int_{-\infty}^{t}\dot{h}_{l'm'}\dot{\bar{h}}_{l''m''}\\
+	M\left(t\right)v_{z}\left(t\right) = & -\frac{1}{8\sqrt{3\pi}}\sum_{l'=2}^{\infty}\sum_{l''=2}^{\infty}\sum_{m''= -\min(l',l'')}^{\min(l',l'')}\left(-1\right)^{m'}
+	\times G^{2-20}_{l'l''1 m'-m''0} \times \int_{-\infty}^{t}\dot{h}_{l'm'}\dot{\bar{h}}_{l''m''}
+\end{align}
+where
+\begin{align}
+G^{s_1 s_2 s_3}_{l_1 l_2 l_3 m_1 m_2 m_3}&\equiv\int\, _{-s1}Y^{l_1m_1}(\Theta, \Phi)_{-s2}Y^{l_2m_2}(\Theta, \Phi)_{-s3}Y^{l_3m_3}(\Theta, \Phi)d\Omega \nonumber \\
+&=(-1)^{s_1+s_2+s_3}\frac{[(2l_1+1)(2l_2+1)(2l_3+1)]^{1/2}}{(4\pi)^{3/2}}\int_{0}^{2\pi}e^{\mathit{i}(m_1+m_2+m_3)\Phi}d\Phi\int_{0}^{\pi}d^{l_1}_{m_1s_1}d^{l_2}_{m_2s_2}d^{l_3}_{m_3s_3}\sin(\Theta)d\Theta
+\end{align}
+The $\Phi$ integral is 
+\begin{equation}
+\int_{0}^{2\pi}e^{\mathit{i}(m_1+m_2+m_3)\Phi}d\Phi = 2\pi\delta^{-m_1}_{m_2+m_3}
+\end{equation}
+The $\Phi$ integral can be written as 
+\begin{equation}
+\int_{0}^{\pi}d^{l_1}_{m_1s_1}d^{l_2}_{m_2s_2}d^{l_3}_{m_3s_3}\sin\Theta d\Theta = 2\sum_{k_1k_2k_3}g_1(k_1)g_2(k_2)g_3(k_3)\int_{0}^{\pi}\left(\sin\frac{\Theta}{2}\right)^{2a-1}\left(\cos\frac{\Theta}{2}\right)^{2b-1}d\Theta
+\end{equation}
+where $a=1+(p_1+p_2+p_3)/2$ and $b=1+l_1+l_2+l_3-(p_1+p_2+p_3)/2$. The $\Phi$ integral is expression in terms of the Beta or Gamma function and can be found in standard tables.
+\begin{equation}
+\int_{0}^{\pi}\left(\sin\frac{\Theta}{2}\right)^{2a-1}\left(\cos\frac{\Theta}{2}\right)^{2b-1}d\Theta=\frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)}=B(a,b)
+\end{equation}
+\begin{equation}
+g_j(k_j)=\frac{(-1)^k_j[(l_j + m_j)!(l_j-m_j)!(l_j+s_j)!(l_j-s_j)!]^{1/2}}{k_j!(l_j+m_j-k_j)!(l_j-s_j-k_j)!(s_j-m_j+k_j)!},
+\end{equation}
+$p_j=2k_j+s_j-m_j$, $k_i=\max(0, m-s)$ and $k_f=\min(l+m, l-s)$. The index $j=1,2,3$ serves only the three harmonics.
+
+Now we can use the above equation and the SXS pakage to load the data
 \section*{References}
 
 \bibliographystyle{apsrev4-1}
